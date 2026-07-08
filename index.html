@@ -807,17 +807,23 @@ addEventListener('scroll', onScroll, {passive:true}); onScroll();
    GSAP — scroll choreography (only when motion is on)
    ============================================================ */
 let gsapCtx = null;
+let heroPlayed = false;
 
 function enableGsap(){
   if (!window.gsap || !window.ScrollTrigger || gsapCtx) return;
   gsap.registerPlugin(ScrollTrigger);
   gsapCtx = gsap.context(() => {
-    // hero entrance
-    gsap.from('.hero h1 .line-in', {yPercent:110, duration:1.1, ease:'power4.out', stagger:.12, delay:.15});
-    gsap.from('.kicker, .hero-sub, .hero-actions', {autoAlpha:0, y:24, duration:.9, ease:'power3.out', stagger:.1, delay:.5});
-    gsap.from('.hero-meta > div', {autoAlpha:0, y:18, duration:.7, ease:'power3.out', stagger:.08, delay:.9});
-    // section reveals
+    // hero entrance — play once, and only when the hero is actually on screen
+    if (!heroPlayed && scrollY < 80){
+      heroPlayed = true;
+      gsap.from('.hero h1 .line-in', {yPercent:110, duration:1.1, ease:'power4.out', stagger:.12, delay:.15});
+      gsap.from('.kicker, .hero-sub, .hero-actions', {autoAlpha:0, y:24, duration:.9, ease:'power3.out', stagger:.1, delay:.5});
+      gsap.from('.hero-meta > div', {autoAlpha:0, y:18, duration:.7, ease:'power3.out', stagger:.08, delay:.9});
+    }
+    // section reveals — never re-hide content already at or above the viewport
+    // (matters when motion is toggled back on mid-page)
     gsap.utils.toArray('.reveal').forEach(el => {
+      if (el.getBoundingClientRect().top < innerHeight) return;
       gsap.from(el, {
         autoAlpha:0, y:36, duration:.85, ease:'power3.out',
         scrollTrigger:{trigger:el, start:'top 88%', once:true}
@@ -952,7 +958,7 @@ function disableThree(){ if (three) three.stop(); }
    ============================================================ */
 function applyMotion(){
   html.classList.toggle('no-motion', !motionOn);
-  motionToggle.setAttribute('aria-pressed', String(!motionOn));
+  motionToggle.setAttribute('aria-pressed', String(motionOn));
   motionToggleTxt.textContent = motionOn ? 'Motion: on' : 'Motion: off';
   if (motionOn){ enableGsap(); enableThree(); }
   else { disableGsap(); disableThree(); }
