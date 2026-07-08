@@ -98,9 +98,11 @@
   --mono:"JetBrains Mono",ui-monospace,Consolas,monospace;
   --max:1200px;
   --pad:clamp(20px,4vw,48px);
+  /* z-scale: 10 canvas-content · 30 ticker · 50 nav · 70 tour · 90 skip */
 }
 *{margin:0;padding:0;box-sizing:border-box}
 html{scroll-behavior:smooth}
+html.no-motion{scroll-behavior:auto}
 @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
 body{
   background:var(--bg);color:var(--text);
@@ -109,7 +111,6 @@ body{
   -webkit-font-smoothing:antialiased;
   overflow-x:hidden;
 }
-/* grain */
 body::before{
   content:"";position:fixed;inset:0;pointer-events:none;z-index:1;opacity:.35;
   background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2'/%3E%3CfeColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 0.04 0'/%3E%3C/filter%3E%3Crect width='120' height='120' filter='url(%23n)'/%3E%3C/svg%3E");
@@ -119,6 +120,17 @@ a{color:inherit;text-decoration:none}
 :focus-visible{outline:2px solid var(--accent);outline-offset:3px;border-radius:2px}
 .wrap{max-width:var(--max);margin:0 auto;padding-left:var(--pad);padding-right:var(--pad)}
 .mono{font-family:var(--mono);font-size:12px;letter-spacing:.14em;text-transform:uppercase;font-weight:400}
+section{scroll-margin-top:80px}
+
+/* skip link */
+.skip{
+  position:fixed;top:12px;left:12px;z-index:90;
+  background:var(--accent);color:var(--accent-ink);
+  font-family:var(--mono);font-size:13px;letter-spacing:.08em;
+  padding:12px 20px;border-radius:8px;
+  transform:translateY(-200%);transition:transform .2s;
+}
+.skip:focus{transform:none;outline-offset:0}
 
 /* ===== NAV ===== */
 .nav{
@@ -130,7 +142,7 @@ a{color:inherit;text-decoration:none}
 .nav-inner{max-width:var(--max);margin:0 auto;padding:0 var(--pad);height:68px;display:flex;align-items:center;justify-content:space-between;gap:24px}
 .brand{display:flex;align-items:center;gap:12px;font-family:var(--mono);font-size:13px;letter-spacing:.08em}
 .brand-mark{width:26px;height:26px;flex:none}
-.nav-links{display:flex;gap:28px;align-items:center}
+.nav-links{display:flex;gap:22px;align-items:center}
 .nav-links a{color:var(--muted);font-family:var(--mono);font-size:12px;letter-spacing:.12em;text-transform:uppercase;transition:color .2s;cursor:pointer}
 .nav-links a:hover{color:var(--text)}
 .nav-cta{
@@ -140,14 +152,26 @@ a{color:inherit;text-decoration:none}
 }
 .nav-cta:hover{background:var(--accent);color:var(--accent-ink)!important;border-color:var(--accent)}
 .nav-cta svg{width:14px;height:14px}
-@media(max-width:760px){.nav-links a:not(.nav-cta){display:none}}
+.icon-btn{
+  display:inline-flex;align-items:center;justify-content:center;gap:8px;cursor:pointer;
+  min-width:44px;min-height:44px;padding:0 14px;border-radius:100px;
+  background:none;border:1px solid var(--line-strong);color:var(--muted);
+  font-family:var(--mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;
+  transition:all .2s;
+}
+.icon-btn:hover{color:var(--text);border-color:var(--text)}
+.icon-btn[aria-pressed="true"]{background:var(--surface-2);color:var(--accent);border-color:var(--accent)}
+.icon-btn svg{width:16px;height:16px;flex:none}
+@media(max-width:900px){.nav-links a:not(.nav-cta){display:none}.icon-btn .btn-txt{display:none}}
 
 /* ===== HERO ===== */
 .hero{position:relative;min-height:100svh;display:flex;flex-direction:column;justify-content:flex-end;padding-top:120px;overflow:hidden}
+#bg3d{position:absolute;inset:0;width:100%;height:100%;z-index:0;display:block}
+.hero .wrap{position:relative;z-index:10}
 .hero-glow{
   position:absolute;top:-20%;right:-10%;width:70vw;height:70vw;max-width:900px;max-height:900px;
   background:radial-gradient(circle,rgba(212,255,63,.07) 0%,transparent 60%);
-  pointer-events:none;
+  pointer-events:none;z-index:0;
 }
 .kicker{display:flex;align-items:center;gap:14px;color:var(--muted);margin-bottom:32px}
 .kicker::before{content:"";width:40px;height:1px;background:var(--accent)}
@@ -157,26 +181,22 @@ a{color:inherit;text-decoration:none}
   line-height:1.02;letter-spacing:-.02em;
 }
 .hero h1 em{font-style:italic;color:var(--accent)}
-.hero-sub{
-  max-width:560px;color:var(--muted);font-size:clamp(16px,1.6vw,19px);
-  margin-top:36px;
-}
+.hero h1 .line{display:block;overflow:hidden}
+.hero h1 .line-in{display:block}
+.hero-sub{max-width:560px;color:var(--muted);font-size:clamp(16px,1.6vw,19px);margin-top:36px}
 .hero-actions{display:flex;gap:16px;margin-top:44px;flex-wrap:wrap}
 .btn{
   display:inline-flex;align-items:center;gap:10px;cursor:pointer;
   font-family:var(--mono);font-size:13px;letter-spacing:.1em;text-transform:uppercase;
-  padding:16px 30px;border-radius:100px;transition:all .25s;
+  padding:16px 30px;border-radius:100px;transition:all .25s;border:none;
 }
 .btn svg{width:15px;height:15px;transition:transform .25s}
 .btn-primary{background:var(--accent);color:var(--accent-ink);border:1px solid var(--accent)}
 .btn-primary:hover{background:#e4ff70;border-color:#e4ff70}
 .btn-primary:hover svg{transform:translateX(4px)}
-.btn-ghost{border:1px solid var(--line-strong);color:var(--text)}
+.btn-ghost{border:1px solid var(--line-strong);color:var(--text);background:none}
 .btn-ghost:hover{border-color:var(--text)}
-.hero-meta{
-  border-top:1px solid var(--line);margin-top:80px;
-  display:grid;grid-template-columns:repeat(4,1fr);
-}
+.hero-meta{border-top:1px solid var(--line);margin-top:80px;display:grid;grid-template-columns:repeat(4,1fr)}
 .hero-meta > div{padding:26px 20px 34px 0;border-right:1px solid var(--line)}
 .hero-meta > div:last-child{border-right:none}
 .hero-meta .mono{color:var(--faint);display:block;margin-bottom:6px}
@@ -184,8 +204,9 @@ a{color:inherit;text-decoration:none}
 @media(max-width:760px){.hero-meta{grid-template-columns:1fr 1fr}.hero-meta > div:nth-child(2){border-right:none}}
 
 /* ===== TICKER ===== */
-.ticker{border-top:1px solid var(--line);border-bottom:1px solid var(--line);overflow:hidden;padding:18px 0;background:var(--surface)}
+.ticker{border-top:1px solid var(--line);border-bottom:1px solid var(--line);overflow:hidden;padding:18px 0;background:var(--surface);position:relative;z-index:30}
 .ticker-track{display:flex;gap:0;width:max-content;animation:scroll 40s linear infinite}
+html.no-motion .ticker-track{animation:none}
 @media(prefers-reduced-motion:reduce){.ticker-track{animation:none}}
 .ticker span{font-family:var(--mono);font-size:12px;letter-spacing:.18em;text-transform:uppercase;color:var(--faint);padding:0 28px;white-space:nowrap;display:flex;align-items:center;gap:28px}
 .ticker span::after{content:"·";color:var(--accent)}
@@ -201,10 +222,8 @@ section{padding:clamp(80px,12vh,150px) 0;position:relative}
 .sec-head p{color:var(--muted);max-width:520px;margin-top:20px}
 @media(max-width:760px){.sec-head{grid-template-columns:1fr;gap:16px}}
 
-/* reveal */
-.reveal{opacity:0;transform:translateY(28px);transition:opacity .7s cubic-bezier(.2,.6,.2,1),transform .7s cubic-bezier(.2,.6,.2,1)}
-.reveal.in{opacity:1;transform:none}
-@media(prefers-reduced-motion:reduce){.reveal{opacity:1;transform:none;transition:none}}
+/* tour highlight */
+.tour-spot{outline:2px solid var(--accent);outline-offset:-2px;border-radius:4px;transition:outline-color .3s}
 
 /* ===== FAILURE MODES ===== */
 .fail-grid{display:grid;grid-template-columns:repeat(3,1fr);border:1px solid var(--line)}
@@ -219,7 +238,6 @@ section{padding:clamp(80px,12vh,150px) 0;position:relative}
 @media(max-width:860px){.fail-grid{grid-template-columns:1fr}.fail{border-right:none;border-bottom:1px solid var(--line)}.fail:last-child{border-bottom:none}}
 
 /* ===== HOW ===== */
-.how{counter-reset:step}
 .step{
   display:grid;grid-template-columns:110px 1fr 1.1fr;gap:clamp(20px,4vw,60px);
   padding:clamp(32px,4.5vh,52px) 0;border-top:1px solid var(--line);align-items:baseline;
@@ -259,7 +277,6 @@ section{padding:clamp(80px,12vh,150px) 0;position:relative}
 @media(max-width:760px){.modes-grid{grid-template-columns:1fr}}
 
 /* ===== NUMBERS ===== */
-.numbers{background:var(--surface);border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
 .num-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--line);border:1px solid var(--line)}
 .num{background:var(--surface);padding:clamp(28px,3vw,44px)}
 .num strong{font-family:var(--serif);font-weight:300;font-size:clamp(40px,5vw,64px);letter-spacing:-.03em;display:block;line-height:1;color:var(--text)}
@@ -280,15 +297,13 @@ section{padding:clamp(80px,12vh,150px) 0;position:relative}
 /* ===== INSTALL ===== */
 .install-grid{display:grid;grid-template-columns:1fr 1fr;gap:clamp(32px,5vw,72px);align-items:start}
 .install-copy p{color:var(--muted);margin-bottom:24px}
-.codeblock{
-  background:var(--surface-2);border:1px solid var(--line);border-radius:12px;overflow:hidden;
-}
+.codeblock{background:var(--surface-2);border:1px solid var(--line);border-radius:12px;overflow:hidden}
 .codeblock-head{display:flex;justify-content:space-between;align-items:center;padding:12px 18px;border-bottom:1px solid var(--line)}
 .codeblock-head .mono{color:var(--faint);font-size:11px}
 .copy-btn{
   font-family:var(--mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;
   color:var(--muted);background:none;border:1px solid var(--line-strong);border-radius:6px;
-  padding:6px 12px;cursor:pointer;transition:all .2s;
+  padding:8px 14px;min-height:32px;cursor:pointer;transition:all .2s;
 }
 .copy-btn:hover{color:var(--accent-ink);background:var(--accent);border-color:var(--accent)}
 .codeblock pre{padding:20px 22px;overflow-x:auto;font-family:var(--mono);font-size:13.5px;line-height:1.8;color:#c9c9d1}
@@ -310,9 +325,53 @@ footer{border-top:1px solid var(--line);padding:clamp(56px,9vh,110px) 0 40px}
 .foot-links{display:flex;gap:24px}
 .foot-links a{color:var(--muted);font-family:var(--mono);font-size:11.5px;letter-spacing:.1em;text-transform:uppercase;transition:color .2s}
 .foot-links a:hover{color:var(--accent)}
+
+/* ===== VOICE TOUR ===== */
+.tour-fab{
+  position:fixed;right:clamp(16px,3vw,32px);bottom:clamp(16px,3vw,32px);z-index:70;
+  display:inline-flex;align-items:center;gap:10px;cursor:pointer;
+  background:var(--accent);color:var(--accent-ink);border:1px solid var(--accent);
+  font-family:var(--mono);font-size:12px;letter-spacing:.1em;text-transform:uppercase;
+  padding:14px 22px;min-height:48px;border-radius:100px;
+  box-shadow:0 8px 32px rgba(212,255,63,.25);
+  transition:transform .2s,box-shadow .2s,opacity .3s;
+}
+.tour-fab:hover{box-shadow:0 10px 40px rgba(212,255,63,.4)}
+.tour-fab svg{width:16px;height:16px}
+.tour-fab[hidden]{display:none}
+.tour-panel{
+  position:fixed;left:50%;bottom:clamp(16px,3vw,32px);transform:translateX(-50%);z-index:70;
+  width:min(680px,calc(100vw - 32px));
+  background:rgba(16,16,18,.96);backdrop-filter:blur(16px);
+  border:1px solid var(--line-strong);border-radius:16px;
+  padding:20px 22px;box-shadow:0 20px 60px rgba(0,0,0,.6);
+}
+.tour-panel[hidden]{display:none}
+.tour-top{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:10px}
+.tour-step-label{font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--accent)}
+.tour-caption{color:var(--text);font-size:15.5px;line-height:1.6;min-height:48px}
+.tour-controls{display:flex;gap:8px;align-items:center;margin-top:14px;flex-wrap:wrap}
+.tour-btn{
+  display:inline-flex;align-items:center;justify-content:center;gap:6px;cursor:pointer;
+  min-width:44px;min-height:44px;padding:0 16px;border-radius:10px;
+  background:var(--surface-2);border:1px solid var(--line-strong);color:var(--text);
+  font-family:var(--mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase;
+  transition:all .2s;
+}
+.tour-btn:hover{border-color:var(--accent);color:var(--accent)}
+.tour-btn svg{width:14px;height:14px}
+.tour-hint{margin-left:auto;color:var(--faint);font-family:var(--mono);font-size:10px;letter-spacing:.06em}
+@media(max-width:560px){.tour-hint{display:none}}
+.tour-progress{height:2px;background:var(--line);border-radius:2px;margin-top:14px;overflow:hidden}
+.tour-progress-bar{height:100%;background:var(--accent);width:0;transition:width .4s}
+
+/* visually hidden (screen-reader only) */
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
 </style>
 </head>
 <body>
+
+<a class="skip" href="#main">Skip to content</a>
 
 <!-- ============ NAV ============ -->
 <nav class="nav" id="nav" aria-label="Main navigation">
@@ -326,6 +385,10 @@ footer{border-top:1px solid var(--line);padding:clamp(56px,9vh,110px) 0 40px}
       <a href="#modes">Modes</a>
       <a href="#numbers">The math</a>
       <a href="#install">Install</a>
+      <button class="icon-btn" id="motionToggle" aria-pressed="false" aria-label="Toggle animations on or off">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M13 2 3 14h7l-1 8 10-12h-7l1-8z"/></svg>
+        <span class="btn-txt" id="motionToggleTxt">Motion: on</span>
+      </button>
       <a class="nav-cta" href="https://github.com/rahim1845/product-design-partner" rel="noopener">
         <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 .5C5.65.5.5 5.65.5 12c0 5.08 3.29 9.39 7.86 10.91.58.11.79-.25.79-.55v-2.15c-3.2.7-3.87-1.37-3.87-1.37-.52-1.32-1.28-1.68-1.28-1.68-1.04-.71.08-.7.08-.7 1.15.08 1.76 1.19 1.76 1.19 1.03 1.75 2.69 1.25 3.35.95.1-.74.4-1.25.72-1.53-2.55-.29-5.23-1.28-5.23-5.68 0-1.26.45-2.28 1.19-3.09-.12-.29-.52-1.46.11-3.05 0 0 .97-.31 3.17 1.18a11.1 11.1 0 0 1 5.78 0c2.2-1.49 3.17-1.18 3.17-1.18.63 1.59.23 2.76.11 3.05.74.81 1.19 1.83 1.19 3.09 0 4.41-2.69 5.38-5.25 5.67.41.35.77 1.04.77 2.1v3.12c0 .3.21.66.8.55A11.51 11.51 0 0 0 23.5 12C23.5 5.65 18.35.5 12 .5z"/></svg>
         GitHub
@@ -334,19 +397,28 @@ footer{border-top:1px solid var(--line);padding:clamp(56px,9vh,110px) 0 40px}
   </div>
 </nav>
 
+<main id="main">
+
 <!-- ============ HERO ============ -->
-<header class="hero">
+<header class="hero" id="top">
+  <canvas id="bg3d" aria-hidden="true"></canvas>
   <div class="hero-glow" aria-hidden="true"></div>
   <div class="wrap">
     <p class="kicker mono">An open-source Claude skill · MIT licensed</p>
-    <h1>Your senior<br>product design <em>partner.</em></h1>
+    <h1 id="hero-title">
+      <span class="line"><span class="line-in">Your senior</span></span>
+      <span class="line"><span class="line-in">product design <em>partner.</em></span></span>
+    </h1>
     <p class="hero-sub">From raw idea to validated, shipped, measured, growing product. Real frameworks, sourced math, concrete artifacts — never generic advice.</p>
     <div class="hero-actions">
       <a class="btn btn-primary" href="https://github.com/rahim1845/product-design-partner" rel="noopener">
         Get the skill
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
       </a>
-      <a class="btn btn-ghost" href="#how">See how it works</a>
+      <button class="btn btn-ghost" id="tourStartHero" type="button">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 5 6 9H2v6h4l5 4V5z"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/><path d="M19 5a9 9 0 0 1 0 14"/></svg>
+        Take the voice tour
+      </button>
     </div>
     <div class="hero-meta">
       <div><span class="mono">Lifecycle phases</span><strong>0 — 8</strong></div>
@@ -374,18 +446,18 @@ footer{border-top:1px solid var(--line);padding:clamp(56px,9vh,110px) 0 40px}
         <h2 id="why-title">Three failure modes kill<br>most products. This skill<br>exists to <em>prevent them.</em></h2>
       </div>
     </div>
-    <div class="fail-grid reveal">
-      <article class="fail">
+    <div class="fail-grid">
+      <article class="fail reveal">
         <span class="mono">Failure — A</span>
         <h3>Building something nobody wants</h3>
         <p>A solution in search of a problem. The skill forces the worth-it question first: assumptions ranked by risk, a segment chosen, kill criteria written in advance — before a single screen is designed.</p>
       </article>
-      <article class="fail">
+      <article class="fail reveal">
         <span class="mono">Failure — B</span>
         <h3>Building something people want, in a way that fails them</h3>
         <p>A real job, done badly. It holds every flow to named heuristics and evidence: must-haves intact, friction lowest at moments of highest intent, accessibility designed in — not bolted on.</p>
       </article>
-      <article class="fail">
+      <article class="fail reveal">
         <span class="mono">Failure — C</span>
         <h3>Building something people like that no business can sustain</h3>
         <p>Loved and unviable. Every recommendation ties the user outcome to a business outcome — retention before growth, must-haves before monetization — and names what each choice costs.</p>
@@ -439,16 +511,16 @@ footer{border-top:1px solid var(--line);padding:clamp(56px,9vh,110px) 0 40px}
         <p>You don't leave a phase because you're bored of it — you leave because the evidence says you've earned the next one.</p>
       </div>
     </div>
-    <div class="phase-list reveal">
-      <div class="phase"><span class="phase-n">00</span><span class="phase-name">Worth-it</span><span class="phase-goal">Decide if the problem deserves work at all — kill or proceed, honestly</span><span class="phase-ref">product-strategy</span></div>
-      <div class="phase"><span class="phase-n">01</span><span class="phase-name">Discovery</span><span class="phase-goal">Understand user, job, context — ≥5 interviews or ≥30 proxy artifacts</span><span class="phase-ref">discovery-and-research</span></div>
-      <div class="phase"><span class="phase-n">02</span><span class="phase-name">Define</span><span class="phase-goal">A problem statement two teammates would pursue identically</span><span class="phase-ref">discovery-and-research</span></div>
-      <div class="phase"><span class="phase-n">03</span><span class="phase-name">Ideate</span><span class="phase-goal">Many solutions, pressure-tested against the riskiest assumption</span><span class="phase-ref">discovery-and-research</span></div>
-      <div class="phase"><span class="phase-n">04</span><span class="phase-name">Design</span><span class="phase-goal">Real enough to test — a11y in, every screen has empty, loading, error states</span><span class="phase-ref">design-craft</span></div>
-      <div class="phase"><span class="phase-n">05</span><span class="phase-name">Validate</span><span class="phase-goal">Prove it before engineering cost — riskiest assumption tested</span><span class="phase-ref">validation-and-math</span></div>
-      <div class="phase"><span class="phase-n">06</span><span class="phase-name">Ship</span><span class="phase-goal">Hand off without drift — analytics live pre-launch, rollback triggers written</span><span class="phase-ref">shipping-and-measurement</span></div>
-      <div class="phase"><span class="phase-n">07</span><span class="phase-name">Measure</span><span class="phase-goal">Close the loop — outcome measured honestly, learning written down</span><span class="phase-ref">shipping-and-measurement</span></div>
-      <div class="phase"><span class="phase-n">08</span><span class="phase-name">Grow</span><span class="phase-goal">Compound what works — a working loop identified, positioning articulated</span><span class="phase-ref">product-strategy</span></div>
+    <div class="phase-list">
+      <div class="phase reveal"><span class="phase-n">00</span><span class="phase-name">Worth-it</span><span class="phase-goal">Decide if the problem deserves work at all — kill or proceed, honestly</span><span class="phase-ref">product-strategy</span></div>
+      <div class="phase reveal"><span class="phase-n">01</span><span class="phase-name">Discovery</span><span class="phase-goal">Understand user, job, context — ≥5 interviews or ≥30 proxy artifacts</span><span class="phase-ref">discovery-and-research</span></div>
+      <div class="phase reveal"><span class="phase-n">02</span><span class="phase-name">Define</span><span class="phase-goal">A problem statement two teammates would pursue identically</span><span class="phase-ref">discovery-and-research</span></div>
+      <div class="phase reveal"><span class="phase-n">03</span><span class="phase-name">Ideate</span><span class="phase-goal">Many solutions, pressure-tested against the riskiest assumption</span><span class="phase-ref">discovery-and-research</span></div>
+      <div class="phase reveal"><span class="phase-n">04</span><span class="phase-name">Design</span><span class="phase-goal">Real enough to test — a11y in, every screen has empty, loading, error states</span><span class="phase-ref">design-craft</span></div>
+      <div class="phase reveal"><span class="phase-n">05</span><span class="phase-name">Validate</span><span class="phase-goal">Prove it before engineering cost — riskiest assumption tested</span><span class="phase-ref">validation-and-math</span></div>
+      <div class="phase reveal"><span class="phase-n">06</span><span class="phase-name">Ship</span><span class="phase-goal">Hand off without drift — analytics live pre-launch, rollback triggers written</span><span class="phase-ref">shipping-and-measurement</span></div>
+      <div class="phase reveal"><span class="phase-n">07</span><span class="phase-name">Measure</span><span class="phase-goal">Close the loop — outcome measured honestly, learning written down</span><span class="phase-ref">shipping-and-measurement</span></div>
+      <div class="phase reveal"><span class="phase-n">08</span><span class="phase-name">Grow</span><span class="phase-goal">Compound what works — a working loop identified, positioning articulated</span><span class="phase-ref">product-strategy</span></div>
     </div>
   </div>
 </section>
@@ -463,17 +535,17 @@ footer{border-top:1px solid var(--line);padding:clamp(56px,9vh,110px) 0 40px}
         <p>The skill identifies which hat the moment needs and loads only that expertise. Modes stack when the work demands it.</p>
       </div>
     </div>
-    <div class="modes-grid reveal">
-      <article class="mode"><span class="mono">Mode 01</span><h3>Worth-it</h3><p>"Should I build this?" — DVF assumption ranking, segment scoring, pre-committed kill criteria.</p></article>
-      <article class="mode"><span class="mono">Mode 02</span><h3>Discovery partner</h3><p>Interviews under Mom Test rules, contextual inquiry, synthesis, evidence-backed personas and journeys.</p></article>
-      <article class="mode"><span class="mono">Mode 03</span><h3>Design partner</h3><p>Flows, information architecture, interaction, WCAG 2.2 accessibility, internationalization.</p></article>
-      <article class="mode"><span class="mono">Mode 04</span><h3>Validator</h3><p>Usability tests, smoke tests, fake doors, A/B with honest sample-size math, PMF measurement.</p></article>
-      <article class="mode"><span class="mono">Mode 05</span><h3>Critic</h3><p>Design and strategy review against named heuristics — Nielsen's 10, Fitts, Hick, Jakob — with severity scores.</p></article>
-      <article class="mode"><span class="mono">Mode 06</span><h3>Shipper &amp; measurer</h3><p>Design QA, rollout plans, analytics before launch, rollback triggers, post-launch retention reads.</p></article>
-      <article class="mode"><span class="mono">Mode 07</span><h3>Growth &amp; positioning</h3><p>Dunford positioning, growth loops over funnels, north star metrics, pricing direction.</p></article>
-      <article class="mode"><span class="mono">Mode 08</span><h3>Storyteller</h3><p>Value props, launch copy, naming, decks — selling the transformation, not the feature list.</p></article>
-      <article class="mode"><span class="mono">Mode 09</span><h3>AI product</h3><p>UX for anything that generates, predicts, or decides — confidence, failure states, trust, ethics.</p></article>
-      <article class="mode"><span class="mono">Mode 10</span><h3>Portfolio</h3><p>Case studies and design storytelling that show judgment, not just deliverables.</p></article>
+    <div class="modes-grid">
+      <article class="mode reveal"><span class="mono">Mode 01</span><h3>Worth-it</h3><p>"Should I build this?" — DVF assumption ranking, segment scoring, pre-committed kill criteria.</p></article>
+      <article class="mode reveal"><span class="mono">Mode 02</span><h3>Discovery partner</h3><p>Interviews under Mom Test rules, contextual inquiry, synthesis, evidence-backed personas and journeys.</p></article>
+      <article class="mode reveal"><span class="mono">Mode 03</span><h3>Design partner</h3><p>Flows, information architecture, interaction, WCAG 2.2 accessibility, internationalization.</p></article>
+      <article class="mode reveal"><span class="mono">Mode 04</span><h3>Validator</h3><p>Usability tests, smoke tests, fake doors, A/B with honest sample-size math, PMF measurement.</p></article>
+      <article class="mode reveal"><span class="mono">Mode 05</span><h3>Critic</h3><p>Design and strategy review against named heuristics — Nielsen's 10, Fitts, Hick, Jakob — with severity scores.</p></article>
+      <article class="mode reveal"><span class="mono">Mode 06</span><h3>Shipper &amp; measurer</h3><p>Design QA, rollout plans, analytics before launch, rollback triggers, post-launch retention reads.</p></article>
+      <article class="mode reveal"><span class="mono">Mode 07</span><h3>Growth &amp; positioning</h3><p>Dunford positioning, growth loops over funnels, north star metrics, pricing direction.</p></article>
+      <article class="mode reveal"><span class="mono">Mode 08</span><h3>Storyteller</h3><p>Value props, launch copy, naming, decks — selling the transformation, not the feature list.</p></article>
+      <article class="mode reveal"><span class="mono">Mode 09</span><h3>AI product</h3><p>UX for anything that generates, predicts, or decides — confidence, failure states, trust, ethics.</p></article>
+      <article class="mode reveal"><span class="mono">Mode 10</span><h3>Portfolio</h3><p>Case studies and design storytelling that show judgment, not just deliverables.</p></article>
     </div>
   </div>
 </section>
@@ -488,13 +560,13 @@ footer{border-top:1px solid var(--line);padding:clamp(56px,9vh,110px) 0 40px}
         <p>The skill carries real research at memorize-level — and refuses to fabricate the rest. Numbers are cited, or explicitly labeled illustrative.</p>
       </div>
     </div>
-    <div class="num-grid reveal">
-      <div class="num"><strong>5<sup>users</sup></strong><p class="num-label">find ~85% of usability problems per round</p><span class="mono">Nielsen &amp; Landauer, 1993</span></div>
-      <div class="num"><strong>40<sup>%</sup></strong><p class="num-label">"very disappointed" among activated users = product-market fit signal</p><span class="mono">Sean Ellis PMF survey</span></div>
-      <div class="num"><strong>4.5<sup>:1</sup></strong><p class="num-label">minimum contrast for body text; 3:1 for large text &amp; UI</p><span class="mono">WCAG 2.2 AA</span></div>
-      <div class="num"><strong>~575<sup>per arm</sup></strong><p class="num-label">sample needed to detect an 8-point lift from a 34% baseline</p><span class="mono">α=.05 · power=.80</span></div>
-      <div class="num"><strong>4<sup>±1</sup></strong><p class="num-label">working-memory chunks — the real limit, not 7±2</p><span class="mono">Cowan, 2001</span></div>
-      <div class="num"><strong>15–20<sup>people</sup></strong><p class="num-label">participants per segment for reliable card sorting</p><span class="mono">Tullis &amp; Wood, 2004</span></div>
+    <div class="num-grid">
+      <div class="num reveal"><strong>5<sup>users</sup></strong><p class="num-label">find ~85% of usability problems per round</p><span class="mono">Nielsen &amp; Landauer, 1993</span></div>
+      <div class="num reveal"><strong>40<sup>%</sup></strong><p class="num-label">"very disappointed" among activated users = product-market fit signal</p><span class="mono">Sean Ellis PMF survey</span></div>
+      <div class="num reveal"><strong>4.5<sup>:1</sup></strong><p class="num-label">minimum contrast for body text; 3:1 for large text &amp; UI</p><span class="mono">WCAG 2.2 AA</span></div>
+      <div class="num reveal"><strong>~575<sup>per arm</sup></strong><p class="num-label">sample needed to detect an 8-point lift from a 34% baseline</p><span class="mono">α=.05 · power=.80</span></div>
+      <div class="num reveal"><strong>4<sup>±1</sup></strong><p class="num-label">working-memory chunks — the real limit, not 7±2</p><span class="mono">Cowan, 2001</span></div>
+      <div class="num reveal"><strong>15–20<sup>people</sup></strong><p class="num-label">participants per segment for reliable card sorting</p><span class="mono">Tullis &amp; Wood, 2004</span></div>
     </div>
   </div>
 </section>
@@ -508,14 +580,14 @@ footer{border-top:1px solid var(--line);padding:clamp(56px,9vh,110px) 0 40px}
         <h2 id="principles-title">How it <em>operates.</em></h2>
       </div>
     </div>
-    <div class="principles reveal">
-      <div class="principle"><span class="mono">01</span><div><strong>Diagnose phase first.</strong><span>Match guidance to where you actually are. Never dump the whole process.</span></div></div>
-      <div class="principle"><span class="mono">02</span><div><strong>Apply frameworks, don't name-drop them.</strong><span>Every framework mentioned must produce a concrete artifact in the reply.</span></div></div>
-      <div class="principle"><span class="mono">03</span><div><strong>Tie user outcomes to business outcomes.</strong><span>And call it out when one is being optimized at the other's expense.</span></div></div>
-      <div class="principle"><span class="mono">04</span><div><strong>Challenge weak thinking, kindly but directly.</strong><span>No flattering bad ideas. No validating assumptions presented as facts.</span></div></div>
-      <div class="principle"><span class="mono">05</span><div><strong>Evidence over opinion.</strong><span>Interviews and observed behavior beat proxies; proxies beat nothing. Research theater is not research.</span></div></div>
-      <div class="principle"><span class="mono">06</span><div><strong>Real sources only.</strong><span>Never fabricate citations, stats, or quotes. Numbers are sourced, or labeled illustrative.</span></div></div>
-      <div class="principle"><span class="mono">07</span><div><strong>Scale to your constraints.</strong><span>A solo founder with one evening gets different methods than a team with research ops.</span></div></div>
+    <div class="principles">
+      <div class="principle reveal"><span class="mono">01</span><div><strong>Diagnose phase first.</strong><span>Match guidance to where you actually are. Never dump the whole process.</span></div></div>
+      <div class="principle reveal"><span class="mono">02</span><div><strong>Apply frameworks, don't name-drop them.</strong><span>Every framework mentioned must produce a concrete artifact in the reply.</span></div></div>
+      <div class="principle reveal"><span class="mono">03</span><div><strong>Tie user outcomes to business outcomes.</strong><span>And call it out when one is being optimized at the other's expense.</span></div></div>
+      <div class="principle reveal"><span class="mono">04</span><div><strong>Challenge weak thinking, kindly but directly.</strong><span>No flattering bad ideas. No validating assumptions presented as facts.</span></div></div>
+      <div class="principle reveal"><span class="mono">05</span><div><strong>Evidence over opinion.</strong><span>Interviews and observed behavior beat proxies; proxies beat nothing. Research theater is not research.</span></div></div>
+      <div class="principle reveal"><span class="mono">06</span><div><strong>Real sources only.</strong><span>Never fabricate citations, stats, or quotes. Numbers are sourced, or labeled illustrative.</span></div></div>
+      <div class="principle reveal"><span class="mono">07</span><div><strong>Scale to your constraints.</strong><span>A solo founder with one evening gets different methods than a team with research ops.</span></div></div>
     </div>
   </div>
 </section>
@@ -555,6 +627,8 @@ help me figure out if it's worth building</pre>
   </div>
 </section>
 
+</main>
+
 <!-- ============ FOOTER ============ -->
 <footer>
   <div class="wrap">
@@ -572,27 +646,351 @@ help me figure out if it's worth building</pre>
   </div>
 </footer>
 
+<!-- ============ VOICE TOUR UI ============ -->
+<button class="tour-fab" id="tourFab" type="button" aria-label="Start the guided voice tour of this page">
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 5 6 9H2v6h4l5 4V5z"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/><path d="M19 5a9 9 0 0 1 0 14"/></svg>
+  Voice tour
+</button>
+
+<div class="tour-panel" id="tourPanel" role="dialog" aria-label="Guided voice tour" tabindex="-1" hidden>
+  <div class="tour-top">
+    <span class="tour-step-label" id="tourStepLabel">Step 1 of 7</span>
+    <button class="tour-btn" id="tourClose" aria-label="Close tour">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"/></svg>
+    </button>
+  </div>
+  <p class="tour-caption" id="tourCaption" aria-live="polite"></p>
+  <div class="tour-controls">
+    <button class="tour-btn" id="tourPrev" aria-label="Previous step">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5m6-6-6 6 6 6"/></svg>
+      Prev
+    </button>
+    <button class="tour-btn" id="tourPause" aria-label="Pause narration" aria-pressed="false">
+      <svg id="tourPauseIcon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M6 4h4v16H6zM14 4h4v16h-4z"/></svg>
+      <span id="tourPauseTxt">Pause</span>
+    </button>
+    <button class="tour-btn" id="tourNext" aria-label="Next step">
+      Next
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14m-6-6 6 6-6 6"/></svg>
+    </button>
+    <span class="tour-hint" aria-hidden="true">← → navigate · space pause · esc close</span>
+  </div>
+  <div class="tour-progress" aria-hidden="true"><div class="tour-progress-bar" id="tourProgressBar"></div></div>
+</div>
+<div class="sr-only" role="status" id="tourAnnounce"></div>
+
+<!-- Libraries -->
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/three.js/0.158.0/three.min.js"></script>
+
 <script>
-// nav scroll state
+document.addEventListener('DOMContentLoaded', () => {
+'use strict';
+
+/* ============================================================
+   MOTION STATE — single source of truth.
+   Off when: user prefers reduced motion, or toggles it off.
+   ============================================================ */
+const prefersReduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
+let motionOn = !prefersReduced;
+
+const html = document.documentElement;
+const motionToggle = document.getElementById('motionToggle');
+const motionToggleTxt = document.getElementById('motionToggleTxt');
+
+/* ============================================================
+   NAV scroll state
+   ============================================================ */
 const nav = document.getElementById('nav');
 const onScroll = () => nav.classList.toggle('scrolled', scrollY > 24);
 addEventListener('scroll', onScroll, {passive:true}); onScroll();
 
-// scroll reveal
-const io = new IntersectionObserver(entries => {
-  for (const e of entries) if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); }
-}, {threshold: .12});
-document.querySelectorAll('.reveal').forEach(el => io.observe(el));
+/* ============================================================
+   GSAP — scroll choreography (only when motion is on)
+   ============================================================ */
+let gsapCtx = null;
 
-// copy buttons
+function enableGsap(){
+  if (!window.gsap || !window.ScrollTrigger || gsapCtx) return;
+  gsap.registerPlugin(ScrollTrigger);
+  gsapCtx = gsap.context(() => {
+    // hero entrance
+    gsap.from('.hero h1 .line-in', {yPercent:110, duration:1.1, ease:'power4.out', stagger:.12, delay:.15});
+    gsap.from('.kicker, .hero-sub, .hero-actions', {autoAlpha:0, y:24, duration:.9, ease:'power3.out', stagger:.1, delay:.5});
+    gsap.from('.hero-meta > div', {autoAlpha:0, y:18, duration:.7, ease:'power3.out', stagger:.08, delay:.9});
+    // section reveals
+    gsap.utils.toArray('.reveal').forEach(el => {
+      gsap.from(el, {
+        autoAlpha:0, y:36, duration:.85, ease:'power3.out',
+        scrollTrigger:{trigger:el, start:'top 88%', once:true}
+      });
+    });
+  });
+}
+function disableGsap(){
+  if (gsapCtx){ gsapCtx.revert(); gsapCtx = null; }
+}
+
+/* ============================================================
+   THREE.JS — particle field + wireframe in the hero
+   ============================================================ */
+let three = null;
+
+function enableThree(){
+  if (!window.THREE || three || innerWidth < 720) return;
+  const canvas = document.getElementById('bg3d');
+  let renderer;
+  try {
+    renderer = new THREE.WebGLRenderer({canvas, alpha:true, antialias:true, powerPreference:'low-power'});
+  } catch(e){ return; }
+  renderer.setPixelRatio(Math.min(devicePixelRatio, 1.5));
+
+  const scene = new THREE.Scene();
+  const camera = new THREE.PerspectiveCamera(60, 1, .1, 100);
+  camera.position.z = 8;
+
+  const N = 900;
+  const pos = new Float32Array(N * 3);
+  for (let i = 0; i < N; i++){
+    pos[i*3]   = (Math.random() - .5) * 22;
+    pos[i*3+1] = (Math.random() - .5) * 13;
+    pos[i*3+2] = (Math.random() - .5) * 10;
+  }
+  const geo = new THREE.BufferGeometry();
+  geo.setAttribute('position', new THREE.BufferAttribute(pos, 3));
+  const points = new THREE.Points(geo, new THREE.PointsMaterial({
+    color:0xd4ff3f, size:.035, transparent:true, opacity:.5, depthWrite:false,
+    blending:THREE.AdditiveBlending
+  }));
+  scene.add(points);
+
+  const wire = new THREE.LineSegments(
+    new THREE.EdgesGeometry(new THREE.IcosahedronGeometry(4.6, 1)),
+    new THREE.LineBasicMaterial({color:0xd4ff3f, transparent:true, opacity:.09})
+  );
+  wire.position.x = 3.5;
+  scene.add(wire);
+
+  let mx = 0, my = 0;
+  const onMove = e => { mx = e.clientX/innerWidth - .5; my = e.clientY/innerHeight - .5; };
+  addEventListener('pointermove', onMove, {passive:true});
+
+  let raf = 0, visible = true;
+  function resize(){
+    const w = canvas.clientWidth, h = canvas.clientHeight;
+    renderer.setSize(w, h, false);
+    camera.aspect = w / h;
+    camera.updateProjectionMatrix();
+  }
+  resize();
+  addEventListener('resize', resize);
+
+  function tick(t){
+    points.rotation.y = t * .00004;
+    wire.rotation.y = -t * .00006;
+    wire.rotation.x = t * .00003;
+    camera.position.x += (mx * 1.2 - camera.position.x) * .04;
+    camera.position.y += (-my * .8 - camera.position.y) * .04;
+    camera.lookAt(0, 0, 0);
+    renderer.render(scene, camera);
+    raf = requestAnimationFrame(tick);
+  }
+  raf = requestAnimationFrame(tick);
+
+  const io = new IntersectionObserver(([e]) => {
+    visible = e.isIntersecting;
+    cancelAnimationFrame(raf);
+    if (visible && three) raf = requestAnimationFrame(tick);
+  });
+  io.observe(canvas);
+  document.addEventListener('visibilitychange', () => {
+    cancelAnimationFrame(raf);
+    if (!document.hidden && visible && three) raf = requestAnimationFrame(tick);
+  });
+
+  three = {
+    stop(){
+      cancelAnimationFrame(raf);
+      io.disconnect();
+      removeEventListener('pointermove', onMove);
+      removeEventListener('resize', resize);
+      renderer.dispose();
+      geo.dispose();
+      canvas.style.display = 'none';
+      three = null;
+    }
+  };
+  canvas.style.display = 'block';
+}
+function disableThree(){ if (three) three.stop(); }
+
+/* ============================================================
+   Motion toggle
+   ============================================================ */
+function applyMotion(){
+  html.classList.toggle('no-motion', !motionOn);
+  motionToggle.setAttribute('aria-pressed', String(!motionOn));
+  motionToggleTxt.textContent = motionOn ? 'Motion: on' : 'Motion: off';
+  if (motionOn){ enableGsap(); enableThree(); }
+  else { disableGsap(); disableThree(); }
+}
+motionToggle.addEventListener('click', () => { motionOn = !motionOn; applyMotion(); });
+applyMotion();
+
+/* ============================================================
+   Copy buttons
+   ============================================================ */
 document.querySelectorAll('.copy-btn').forEach(btn => {
   btn.addEventListener('click', async () => {
     try {
-      await navigator.clipboard.writeText(btn.dataset.copy.replace(/\n/g,'\n'));
+      await navigator.clipboard.writeText(btn.dataset.copy);
       const t = btn.textContent; btn.textContent = 'Copied';
       setTimeout(() => btn.textContent = t, 1600);
     } catch {}
   });
+});
+
+/* ============================================================
+   VOICE TOUR — narrated, captioned, keyboard-driven walkthrough.
+   Speech uses the Web Speech API; captions always shown so the
+   tour is fully usable without audio.
+   ============================================================ */
+const STEPS = [
+  { sel:'#top', label:'Welcome',
+    text:'Welcome to Product Design Partner — an open-source skill that turns Claude into a senior product design partner. It guides you from a raw idea all the way to a validated, shipped, measured, and growing product. Use the next button or the right arrow key to continue.' },
+  { sel:'#why', label:'Why it exists',
+    text:'Most products die in one of three ways: nobody wants them, they fail the people who do, or no business can sustain them. This skill is built to catch all three failure modes before they catch you.' },
+  { sel:'#how', label:'How it works',
+    text:'You describe your real situation. The skill diagnoses which of nine lifecycle phases you are in, loads only the expertise that phase needs, and always leaves you with a concrete artifact — never generic advice.' },
+  { sel:'#lifecycle', label:'The lifecycle',
+    text:'Nine phases run from phase zero, worth-it, to phase eight, grow. Each phase has an objective and honest exit criteria — you advance on evidence, not enthusiasm.' },
+  { sel:'#modes', label:'Ten modes',
+    text:'Ten expert modes cover the whole journey: strategy, discovery research, design craft, validation, critique, shipping, growth, storytelling, AI products, and portfolio work. The skill picks the right hat for the moment.' },
+  { sel:'#numbers', label:'The math',
+    text:'The advice is backed by sourced research: five users find about eighty-five percent of usability problems. Forty percent very-disappointed is the product-market-fit bar. Contrast ratios, sample sizes — all cited, never invented.' },
+  { sel:'#install', label:'Get started',
+    text:'Installing takes two minutes: clone the repository from GitHub and copy the skill folder into your Claude skills directory. It is free, MIT licensed, and open source. Thanks for taking the tour!' }
+];
+
+const fab = document.getElementById('tourFab');
+const panel = document.getElementById('tourPanel');
+const caption = document.getElementById('tourCaption');
+const stepLabel = document.getElementById('tourStepLabel');
+const progressBar = document.getElementById('tourProgressBar');
+const announce = document.getElementById('tourAnnounce');
+const btnPrev = document.getElementById('tourPrev');
+const btnNext = document.getElementById('tourNext');
+const btnPause = document.getElementById('tourPause');
+const btnPauseTxt = document.getElementById('tourPauseTxt');
+const btnPauseIcon = document.getElementById('tourPauseIcon');
+const btnClose = document.getElementById('tourClose');
+const heroStart = document.getElementById('tourStartHero');
+
+const synth = 'speechSynthesis' in window ? window.speechSynthesis : null;
+let tourOpen = false, tourIdx = 0, tourPaused = false, opener = null, spotEl = null;
+
+function pickVoice(){
+  if (!synth) return null;
+  const vs = synth.getVoices();
+  return vs.find(v => /en[-_]US/i.test(v.lang) && /Google|Natural|Aria|Jenny/i.test(v.name))
+      || vs.find(v => /^en/i.test(v.lang)) || null;
+}
+
+function speak(text){
+  if (!synth || tourPaused) return;
+  synth.cancel();
+  const u = new SpeechSynthesisUtterance(text);
+  const v = pickVoice();
+  if (v) u.voice = v;
+  u.rate = 1; u.pitch = 1;
+  u.onend = () => {
+    // auto-advance after narration, small breath
+    if (tourOpen && !tourPaused && tourIdx < STEPS.length - 1){
+      setTimeout(() => { if (tourOpen && !tourPaused) goTo(tourIdx + 1); }, 700);
+    }
+  };
+  synth.speak(u);
+}
+
+function spotlight(el){
+  if (spotEl) spotEl.classList.remove('tour-spot');
+  spotEl = el;
+  if (el) el.classList.add('tour-spot');
+}
+
+function goTo(i){
+  tourIdx = Math.max(0, Math.min(STEPS.length - 1, i));
+  const step = STEPS[tourIdx];
+  const el = document.querySelector(step.sel);
+  stepLabel.textContent = `Step ${tourIdx+1} of ${STEPS.length} — ${step.label}`;
+  caption.textContent = step.text;
+  progressBar.style.width = `${((tourIdx+1)/STEPS.length)*100}%`;
+  announce.textContent = `Tour step ${tourIdx+1} of ${STEPS.length}: ${step.label}`;
+  btnPrev.disabled = tourIdx === 0;
+  btnNext.disabled = tourIdx === STEPS.length - 1;
+  if (el){
+    spotlight(el.querySelector('.sec-head') || el);
+    el.scrollIntoView({behavior: motionOn ? 'smooth' : 'auto', block:'start'});
+  }
+  speak(step.text);
+}
+
+function openTour(fromBtn){
+  opener = fromBtn;
+  tourOpen = true; tourPaused = false;
+  panel.hidden = false;
+  fab.hidden = true;
+  setPauseUI();
+  goTo(0);
+  panel.focus();
+}
+
+function closeTour(){
+  tourOpen = false;
+  if (synth) synth.cancel();
+  panel.hidden = true;
+  fab.hidden = false;
+  spotlight(null);
+  if (opener) opener.focus();
+}
+
+function setPauseUI(){
+  btnPause.setAttribute('aria-pressed', String(tourPaused));
+  btnPause.setAttribute('aria-label', tourPaused ? 'Resume narration' : 'Pause narration');
+  btnPauseTxt.textContent = tourPaused ? 'Resume' : 'Pause';
+  btnPauseIcon.innerHTML = tourPaused
+    ? '<path d="M8 5v14l11-7z"/>'
+    : '<path d="M6 4h4v16H6zM14 4h4v16h-4z"/>';
+}
+
+function togglePause(){
+  tourPaused = !tourPaused;
+  setPauseUI();
+  if (tourPaused){ if (synth) synth.cancel(); }
+  else speak(STEPS[tourIdx].text);
+}
+
+fab.addEventListener('click', () => openTour(fab));
+heroStart.addEventListener('click', () => openTour(heroStart));
+btnClose.addEventListener('click', closeTour);
+btnPrev.addEventListener('click', () => goTo(tourIdx - 1));
+btnNext.addEventListener('click', () => goTo(tourIdx + 1));
+btnPause.addEventListener('click', togglePause);
+
+document.addEventListener('keydown', e => {
+  if (!tourOpen) return;
+  if (e.key === 'Escape') closeTour();
+  else if (e.key === 'ArrowRight'){ e.preventDefault(); goTo(tourIdx + 1); }
+  else if (e.key === 'ArrowLeft'){ e.preventDefault(); goTo(tourIdx - 1); }
+  else if (e.key === ' ' && !/BUTTON|A|INPUT/.test(document.activeElement.tagName)){
+    e.preventDefault(); togglePause();
+  }
+});
+
+// some browsers load voices async
+if (synth) synth.onvoiceschanged = () => {};
+
 });
 </script>
 </body>
