@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://rahim1845.github.io/product-design-partner/sitemap.xml

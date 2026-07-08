@@ -1,0 +1,599 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<!-- Primary SEO -->
+<title>Product Design Partner — An Open-Source Claude Skill for Product Design</title>
+<meta name="description" content="A senior product design partner inside Claude. Guides you from raw idea to validated, shipped, measured, growing product — with real frameworks, sourced math, and concrete artifacts. Free and open source.">
+<meta name="author" content="rahim1845">
+<meta name="robots" content="index, follow, max-image-preview:large">
+<link rel="canonical" href="https://rahim1845.github.io/product-design-partner/">
+<meta name="theme-color" content="#0a0a0b">
+
+<!-- Open Graph -->
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://rahim1845.github.io/product-design-partner/">
+<meta property="og:site_name" content="Product Design Partner">
+<meta property="og:title" content="Product Design Partner — An Open-Source Claude Skill">
+<meta property="og:description" content="A senior product design partner inside Claude. From raw idea to validated, shipped, measured, growing product. Real frameworks. Sourced math. Concrete artifacts.">
+<meta property="og:image" content="https://rahim1845.github.io/product-design-partner/assets/og-image.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Product Design Partner — an open-source Claude skill">
+
+<!-- Twitter -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Product Design Partner — An Open-Source Claude Skill">
+<meta name="twitter:description" content="A senior product design partner inside Claude. From raw idea to validated, shipped, measured, growing product.">
+<meta name="twitter:image" content="https://rahim1845.github.io/product-design-partner/assets/og-image.png">
+
+<!-- Favicon -->
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%230a0a0b'/%3E%3Cpath d='M9 24V8h7.5a5.5 5.5 0 1 1 0 11H13v5H9zm4-9h3.2a1.8 1.8 0 1 0 0-3.6H13V15z' fill='%23d4ff3f'/%3E%3C/svg%3E">
+
+<!-- Structured data -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "SoftwareApplication",
+      "name": "Product Design Partner",
+      "operatingSystem": "Any",
+      "applicationCategory": "DeveloperApplication",
+      "description": "An open-source Claude skill that acts as a senior product design partner — guiding products from raw idea through discovery, design, validation, shipping, measurement, and growth.",
+      "url": "https://rahim1845.github.io/product-design-partner/",
+      "downloadUrl": "https://github.com/rahim1845/product-design-partner",
+      "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
+      "license": "https://opensource.org/licenses/MIT"
+    },
+    {
+      "@type": "FAQPage",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "What is the Product Design Partner skill?",
+          "acceptedAnswer": { "@type": "Answer", "text": "It is an open-source skill for Claude that turns it into a senior product design partner. It diagnoses which lifecycle phase your product is in — from 'is this worth building' through discovery, design, validation, shipping, and growth — and applies real, sourced frameworks to produce concrete artifacts instead of generic advice." }
+        },
+        {
+          "@type": "Question",
+          "name": "How do I install it?",
+          "acceptedAnswer": { "@type": "Answer", "text": "Clone the GitHub repository and copy the skill folder into your Claude skills directory (~/.claude/skills/product-design-partner). Then invoke it in Claude Code or Claude with your product question." }
+        },
+        {
+          "@type": "Question",
+          "name": "Is it free?",
+          "acceptedAnswer": { "@type": "Answer", "text": "Yes. The skill is MIT-licensed and fully open source." }
+        },
+        {
+          "@type": "Question",
+          "name": "What makes it different from just asking an AI for design advice?",
+          "acceptedAnswer": { "@type": "Answer", "text": "It is phase-aware, evidence-based, and artifact-driven. Every framework it names produces a concrete deliverable, every number is sourced or labeled illustrative, and it explicitly ties user outcomes to business outcomes while naming the tradeoffs." }
+        }
+      ]
+    }
+  ]
+}
+</script>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300;9..144,400;9..144,500&family=Space+Grotesk:wght@300;400;500&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+<style>
+:root{
+  --bg:#0a0a0b;
+  --surface:#101012;
+  --surface-2:#141416;
+  --line:rgba(244,242,237,.09);
+  --line-strong:rgba(244,242,237,.18);
+  --text:#f4f2ed;
+  --muted:#a3a3ad;
+  --faint:#6e6e78;
+  --accent:#d4ff3f;
+  --accent-ink:#0a0a0b;
+  --serif:"Fraunces",Georgia,serif;
+  --sans:"Space Grotesk",system-ui,sans-serif;
+  --mono:"JetBrains Mono",ui-monospace,Consolas,monospace;
+  --max:1200px;
+  --pad:clamp(20px,4vw,48px);
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+body{
+  background:var(--bg);color:var(--text);
+  font-family:var(--sans);font-weight:300;
+  font-size:17px;line-height:1.65;
+  -webkit-font-smoothing:antialiased;
+  overflow-x:hidden;
+}
+/* grain */
+body::before{
+  content:"";position:fixed;inset:0;pointer-events:none;z-index:1;opacity:.35;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2'/%3E%3CfeColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 0.04 0'/%3E%3C/filter%3E%3Crect width='120' height='120' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+::selection{background:var(--accent);color:var(--accent-ink)}
+a{color:inherit;text-decoration:none}
+:focus-visible{outline:2px solid var(--accent);outline-offset:3px;border-radius:2px}
+.wrap{max-width:var(--max);margin:0 auto;padding-left:var(--pad);padding-right:var(--pad)}
+.mono{font-family:var(--mono);font-size:12px;letter-spacing:.14em;text-transform:uppercase;font-weight:400}
+
+/* ===== NAV ===== */
+.nav{
+  position:fixed;top:0;left:0;right:0;z-index:50;
+  border-bottom:1px solid transparent;
+  transition:background .3s,border-color .3s;
+}
+.nav.scrolled{background:rgba(10,10,11,.82);backdrop-filter:blur(14px);border-color:var(--line)}
+.nav-inner{max-width:var(--max);margin:0 auto;padding:0 var(--pad);height:68px;display:flex;align-items:center;justify-content:space-between;gap:24px}
+.brand{display:flex;align-items:center;gap:12px;font-family:var(--mono);font-size:13px;letter-spacing:.08em}
+.brand-mark{width:26px;height:26px;flex:none}
+.nav-links{display:flex;gap:28px;align-items:center}
+.nav-links a{color:var(--muted);font-family:var(--mono);font-size:12px;letter-spacing:.12em;text-transform:uppercase;transition:color .2s;cursor:pointer}
+.nav-links a:hover{color:var(--text)}
+.nav-cta{
+  border:1px solid var(--line-strong);padding:9px 18px;border-radius:100px;
+  color:var(--text)!important;display:inline-flex;align-items:center;gap:8px;
+  transition:background .2s,color .2s,border-color .2s;
+}
+.nav-cta:hover{background:var(--accent);color:var(--accent-ink)!important;border-color:var(--accent)}
+.nav-cta svg{width:14px;height:14px}
+@media(max-width:760px){.nav-links a:not(.nav-cta){display:none}}
+
+/* ===== HERO ===== */
+.hero{position:relative;min-height:100svh;display:flex;flex-direction:column;justify-content:flex-end;padding-top:120px;overflow:hidden}
+.hero-glow{
+  position:absolute;top:-20%;right:-10%;width:70vw;height:70vw;max-width:900px;max-height:900px;
+  background:radial-gradient(circle,rgba(212,255,63,.07) 0%,transparent 60%);
+  pointer-events:none;
+}
+.kicker{display:flex;align-items:center;gap:14px;color:var(--muted);margin-bottom:32px}
+.kicker::before{content:"";width:40px;height:1px;background:var(--accent)}
+.hero h1{
+  font-family:var(--serif);font-weight:300;
+  font-size:clamp(46px,8.6vw,124px);
+  line-height:1.02;letter-spacing:-.02em;
+}
+.hero h1 em{font-style:italic;color:var(--accent)}
+.hero-sub{
+  max-width:560px;color:var(--muted);font-size:clamp(16px,1.6vw,19px);
+  margin-top:36px;
+}
+.hero-actions{display:flex;gap:16px;margin-top:44px;flex-wrap:wrap}
+.btn{
+  display:inline-flex;align-items:center;gap:10px;cursor:pointer;
+  font-family:var(--mono);font-size:13px;letter-spacing:.1em;text-transform:uppercase;
+  padding:16px 30px;border-radius:100px;transition:all .25s;
+}
+.btn svg{width:15px;height:15px;transition:transform .25s}
+.btn-primary{background:var(--accent);color:var(--accent-ink);border:1px solid var(--accent)}
+.btn-primary:hover{background:#e4ff70;border-color:#e4ff70}
+.btn-primary:hover svg{transform:translateX(4px)}
+.btn-ghost{border:1px solid var(--line-strong);color:var(--text)}
+.btn-ghost:hover{border-color:var(--text)}
+.hero-meta{
+  border-top:1px solid var(--line);margin-top:80px;
+  display:grid;grid-template-columns:repeat(4,1fr);
+}
+.hero-meta > div{padding:26px 20px 34px 0;border-right:1px solid var(--line)}
+.hero-meta > div:last-child{border-right:none}
+.hero-meta .mono{color:var(--faint);display:block;margin-bottom:6px}
+.hero-meta strong{font-family:var(--serif);font-weight:400;font-size:clamp(20px,2.4vw,30px);letter-spacing:-.01em}
+@media(max-width:760px){.hero-meta{grid-template-columns:1fr 1fr}.hero-meta > div:nth-child(2){border-right:none}}
+
+/* ===== TICKER ===== */
+.ticker{border-top:1px solid var(--line);border-bottom:1px solid var(--line);overflow:hidden;padding:18px 0;background:var(--surface)}
+.ticker-track{display:flex;gap:0;width:max-content;animation:scroll 40s linear infinite}
+@media(prefers-reduced-motion:reduce){.ticker-track{animation:none}}
+.ticker span{font-family:var(--mono);font-size:12px;letter-spacing:.18em;text-transform:uppercase;color:var(--faint);padding:0 28px;white-space:nowrap;display:flex;align-items:center;gap:28px}
+.ticker span::after{content:"·";color:var(--accent)}
+@keyframes scroll{to{transform:translateX(-50%)}}
+
+/* ===== SECTIONS ===== */
+section{padding:clamp(80px,12vh,150px) 0;position:relative}
+.sec-head{display:grid;grid-template-columns:180px 1fr;gap:32px;margin-bottom:clamp(48px,7vh,84px);align-items:start}
+.sec-num{font-family:var(--mono);font-size:13px;color:var(--accent);letter-spacing:.14em;padding-top:14px;display:flex;gap:12px;align-items:center}
+.sec-num::after{content:"";flex:1;height:1px;background:var(--line)}
+.sec-head h2{font-family:var(--serif);font-weight:300;font-size:clamp(32px,4.6vw,60px);line-height:1.08;letter-spacing:-.015em}
+.sec-head h2 em{font-style:italic;color:var(--accent)}
+.sec-head p{color:var(--muted);max-width:520px;margin-top:20px}
+@media(max-width:760px){.sec-head{grid-template-columns:1fr;gap:16px}}
+
+/* reveal */
+.reveal{opacity:0;transform:translateY(28px);transition:opacity .7s cubic-bezier(.2,.6,.2,1),transform .7s cubic-bezier(.2,.6,.2,1)}
+.reveal.in{opacity:1;transform:none}
+@media(prefers-reduced-motion:reduce){.reveal{opacity:1;transform:none;transition:none}}
+
+/* ===== FAILURE MODES ===== */
+.fail-grid{display:grid;grid-template-columns:repeat(3,1fr);border:1px solid var(--line)}
+.fail{padding:clamp(28px,3.4vw,44px);border-right:1px solid var(--line);position:relative;transition:background .3s}
+.fail:last-child{border-right:none}
+.fail:hover{background:var(--surface)}
+.fail .mono{color:var(--faint);display:block;margin-bottom:56px}
+.fail h3{font-family:var(--serif);font-weight:400;font-size:clamp(21px,2.2vw,27px);line-height:1.25;margin-bottom:16px;letter-spacing:-.01em}
+.fail p{color:var(--muted);font-size:15.5px}
+.fail::after{content:"";position:absolute;left:0;bottom:0;height:2px;width:0;background:var(--accent);transition:width .4s}
+.fail:hover::after{width:100%}
+@media(max-width:860px){.fail-grid{grid-template-columns:1fr}.fail{border-right:none;border-bottom:1px solid var(--line)}.fail:last-child{border-bottom:none}}
+
+/* ===== HOW ===== */
+.how{counter-reset:step}
+.step{
+  display:grid;grid-template-columns:110px 1fr 1.1fr;gap:clamp(20px,4vw,60px);
+  padding:clamp(32px,4.5vh,52px) 0;border-top:1px solid var(--line);align-items:baseline;
+}
+.step:last-child{border-bottom:1px solid var(--line)}
+.step-num{font-family:var(--serif);font-style:italic;font-weight:300;font-size:clamp(28px,3vw,40px);color:var(--faint)}
+.step h3{font-family:var(--serif);font-weight:400;font-size:clamp(22px,2.6vw,32px);letter-spacing:-.01em;line-height:1.2}
+.step p{color:var(--muted);font-size:16px}
+.step p code{font-family:var(--mono);font-size:13px;color:var(--accent);background:var(--surface-2);padding:2px 7px;border-radius:4px}
+@media(max-width:860px){.step{grid-template-columns:60px 1fr}.step p{grid-column:2}}
+
+/* ===== PHASES ===== */
+.phase-list{border-top:1px solid var(--line)}
+.phase{
+  display:grid;grid-template-columns:70px 220px 1fr 200px;gap:24px;align-items:center;
+  padding:20px 8px;border-bottom:1px solid var(--line);
+  transition:background .25s,padding-left .25s;cursor:default;
+}
+.phase:hover{background:var(--surface);padding-left:20px}
+.phase-n{font-family:var(--mono);font-size:12px;color:var(--accent)}
+.phase-name{font-family:var(--serif);font-weight:400;font-size:clamp(18px,2vw,23px);letter-spacing:-.01em}
+.phase-goal{color:var(--muted);font-size:15px}
+.phase-ref{font-family:var(--mono);font-size:11px;letter-spacing:.08em;color:var(--faint);text-align:right}
+@media(max-width:860px){
+  .phase{grid-template-columns:44px 1fr}
+  .phase-goal{grid-column:2}
+  .phase-ref{display:none}
+}
+
+/* ===== MODES ===== */
+.modes-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:1px;background:var(--line);border:1px solid var(--line)}
+.mode{background:var(--bg);padding:clamp(24px,2.8vw,36px);transition:background .3s;position:relative;overflow:hidden}
+.mode:hover{background:var(--surface)}
+.mode .mono{color:var(--accent);display:block;margin-bottom:14px}
+.mode h3{font-family:var(--serif);font-weight:400;font-size:clamp(19px,2vw,24px);margin-bottom:10px;letter-spacing:-.01em}
+.mode p{color:var(--muted);font-size:15px}
+@media(max-width:760px){.modes-grid{grid-template-columns:1fr}}
+
+/* ===== NUMBERS ===== */
+.numbers{background:var(--surface);border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+.num-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--line);border:1px solid var(--line)}
+.num{background:var(--surface);padding:clamp(28px,3vw,44px)}
+.num strong{font-family:var(--serif);font-weight:300;font-size:clamp(40px,5vw,64px);letter-spacing:-.03em;display:block;line-height:1;color:var(--text)}
+.num strong sup{font-size:.45em;color:var(--accent);font-style:italic;font-family:var(--serif)}
+.num .num-label{margin-top:14px;color:var(--muted);font-size:15px}
+.num .mono{color:var(--faint);display:block;margin-top:10px;font-size:10.5px}
+@media(max-width:860px){.num-grid{grid-template-columns:1fr 1fr}}
+@media(max-width:560px){.num-grid{grid-template-columns:1fr}}
+
+/* ===== PRINCIPLES ===== */
+.principles{max-width:820px}
+.principle{display:flex;gap:28px;padding:26px 0;border-bottom:1px solid var(--line);align-items:baseline}
+.principle:first-child{border-top:1px solid var(--line)}
+.principle .mono{color:var(--accent);flex:none;width:32px}
+.principle div strong{font-weight:500;font-size:17px}
+.principle div span{color:var(--muted);display:block;margin-top:4px;font-size:15.5px}
+
+/* ===== INSTALL ===== */
+.install-grid{display:grid;grid-template-columns:1fr 1fr;gap:clamp(32px,5vw,72px);align-items:start}
+.install-copy p{color:var(--muted);margin-bottom:24px}
+.codeblock{
+  background:var(--surface-2);border:1px solid var(--line);border-radius:12px;overflow:hidden;
+}
+.codeblock-head{display:flex;justify-content:space-between;align-items:center;padding:12px 18px;border-bottom:1px solid var(--line)}
+.codeblock-head .mono{color:var(--faint);font-size:11px}
+.copy-btn{
+  font-family:var(--mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;
+  color:var(--muted);background:none;border:1px solid var(--line-strong);border-radius:6px;
+  padding:6px 12px;cursor:pointer;transition:all .2s;
+}
+.copy-btn:hover{color:var(--accent-ink);background:var(--accent);border-color:var(--accent)}
+.codeblock pre{padding:20px 22px;overflow-x:auto;font-family:var(--mono);font-size:13.5px;line-height:1.8;color:#c9c9d1}
+.codeblock pre .c{color:var(--faint)}
+.codeblock pre .a{color:var(--accent)}
+.codeblock + .codeblock{margin-top:20px}
+@media(max-width:860px){.install-grid{grid-template-columns:1fr}}
+
+/* ===== FOOTER ===== */
+footer{border-top:1px solid var(--line);padding:clamp(56px,9vh,110px) 0 40px}
+.foot-cta{margin-bottom:80px}
+.foot-cta h2{font-family:var(--serif);font-weight:300;font-size:clamp(38px,6.5vw,92px);letter-spacing:-.02em;line-height:1.04}
+.foot-cta h2 a{position:relative;display:inline-block}
+.foot-cta h2 a em{font-style:italic;color:var(--accent)}
+.foot-cta h2 a::after{content:"";position:absolute;left:0;bottom:6px;width:100%;height:1px;background:var(--accent);transform:scaleX(0);transform-origin:left;transition:transform .4s}
+.foot-cta h2 a:hover::after{transform:scaleX(1)}
+.foot-bottom{display:flex;justify-content:space-between;align-items:center;gap:20px;flex-wrap:wrap;border-top:1px solid var(--line);padding-top:32px}
+.foot-bottom p{color:var(--faint);font-family:var(--mono);font-size:11.5px;letter-spacing:.08em}
+.foot-links{display:flex;gap:24px}
+.foot-links a{color:var(--muted);font-family:var(--mono);font-size:11.5px;letter-spacing:.1em;text-transform:uppercase;transition:color .2s}
+.foot-links a:hover{color:var(--accent)}
+</style>
+</head>
+<body>
+
+<!-- ============ NAV ============ -->
+<nav class="nav" id="nav" aria-label="Main navigation">
+  <div class="nav-inner">
+    <a href="#" class="brand" aria-label="Product Design Partner — home">
+      <svg class="brand-mark" viewBox="0 0 32 32" fill="none" aria-hidden="true"><rect width="32" height="32" rx="6" fill="#141416"/><path d="M9 24V8h7.5a5.5 5.5 0 1 1 0 11H13v5H9zm4-9h3.2a1.8 1.8 0 1 0 0-3.6H13V15z" fill="#d4ff3f"/></svg>
+      <span>product-design-partner</span>
+    </a>
+    <div class="nav-links">
+      <a href="#how">How it works</a>
+      <a href="#modes">Modes</a>
+      <a href="#numbers">The math</a>
+      <a href="#install">Install</a>
+      <a class="nav-cta" href="https://github.com/rahim1845/product-design-partner" rel="noopener">
+        <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 .5C5.65.5.5 5.65.5 12c0 5.08 3.29 9.39 7.86 10.91.58.11.79-.25.79-.55v-2.15c-3.2.7-3.87-1.37-3.87-1.37-.52-1.32-1.28-1.68-1.28-1.68-1.04-.71.08-.7.08-.7 1.15.08 1.76 1.19 1.76 1.19 1.03 1.75 2.69 1.25 3.35.95.1-.74.4-1.25.72-1.53-2.55-.29-5.23-1.28-5.23-5.68 0-1.26.45-2.28 1.19-3.09-.12-.29-.52-1.46.11-3.05 0 0 .97-.31 3.17 1.18a11.1 11.1 0 0 1 5.78 0c2.2-1.49 3.17-1.18 3.17-1.18.63 1.59.23 2.76.11 3.05.74.81 1.19 1.83 1.19 3.09 0 4.41-2.69 5.38-5.25 5.67.41.35.77 1.04.77 2.1v3.12c0 .3.21.66.8.55A11.51 11.51 0 0 0 23.5 12C23.5 5.65 18.35.5 12 .5z"/></svg>
+        GitHub
+      </a>
+    </div>
+  </div>
+</nav>
+
+<!-- ============ HERO ============ -->
+<header class="hero">
+  <div class="hero-glow" aria-hidden="true"></div>
+  <div class="wrap">
+    <p class="kicker mono">An open-source Claude skill · MIT licensed</p>
+    <h1>Your senior<br>product design <em>partner.</em></h1>
+    <p class="hero-sub">From raw idea to validated, shipped, measured, growing product. Real frameworks, sourced math, concrete artifacts — never generic advice.</p>
+    <div class="hero-actions">
+      <a class="btn btn-primary" href="https://github.com/rahim1845/product-design-partner" rel="noopener">
+        Get the skill
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+      </a>
+      <a class="btn btn-ghost" href="#how">See how it works</a>
+    </div>
+    <div class="hero-meta">
+      <div><span class="mono">Lifecycle phases</span><strong>0 — 8</strong></div>
+      <div><span class="mono">Expert modes</span><strong>10</strong></div>
+      <div><span class="mono">Reference library</span><strong>9 files</strong></div>
+      <div><span class="mono">License</span><strong>MIT</strong></div>
+    </div>
+  </div>
+</header>
+
+<!-- ============ TICKER ============ -->
+<div class="ticker" aria-hidden="true">
+  <div class="ticker-track">
+    <span>Worth-it</span><span>Discovery</span><span>Define</span><span>Ideate</span><span>Design</span><span>Validate</span><span>Ship</span><span>Measure</span><span>Grow</span>
+    <span>Worth-it</span><span>Discovery</span><span>Define</span><span>Ideate</span><span>Design</span><span>Validate</span><span>Ship</span><span>Measure</span><span>Grow</span>
+  </div>
+</div>
+
+<!-- ============ 01 WHY ============ -->
+<section id="why" aria-labelledby="why-title">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <span class="sec-num">01 / Why</span>
+      <div>
+        <h2 id="why-title">Three failure modes kill<br>most products. This skill<br>exists to <em>prevent them.</em></h2>
+      </div>
+    </div>
+    <div class="fail-grid reveal">
+      <article class="fail">
+        <span class="mono">Failure — A</span>
+        <h3>Building something nobody wants</h3>
+        <p>A solution in search of a problem. The skill forces the worth-it question first: assumptions ranked by risk, a segment chosen, kill criteria written in advance — before a single screen is designed.</p>
+      </article>
+      <article class="fail">
+        <span class="mono">Failure — B</span>
+        <h3>Building something people want, in a way that fails them</h3>
+        <p>A real job, done badly. It holds every flow to named heuristics and evidence: must-haves intact, friction lowest at moments of highest intent, accessibility designed in — not bolted on.</p>
+      </article>
+      <article class="fail">
+        <span class="mono">Failure — C</span>
+        <h3>Building something people like that no business can sustain</h3>
+        <p>Loved and unviable. Every recommendation ties the user outcome to a business outcome — retention before growth, must-haves before monetization — and names what each choice costs.</p>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 02 HOW ============ -->
+<section id="how" aria-labelledby="how-title" style="background:var(--surface)">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <span class="sec-num">02 / How it works</span>
+      <div>
+        <h2 id="how-title">Diagnose first.<br>Then <em>apply craft.</em></h2>
+        <p>The skill never dumps a process on you. It figures out where you actually are, loads only the expertise that phase needs, and leaves you with an artifact you can use.</p>
+      </div>
+    </div>
+    <div class="how">
+      <div class="step reveal">
+        <span class="step-num" aria-hidden="true">01</span>
+        <h3>You bring the real situation</h3>
+        <p>"I have an app idea." "Users aren't coming back." "Review this onboarding flow." Any phase, any fidelity — from a napkin sketch to a live product with churn data.</p>
+      </div>
+      <div class="step reveal">
+        <span class="step-num" aria-hidden="true">02</span>
+        <h3>It diagnoses your phase</h3>
+        <p>Nine lifecycle phases, from <code>0 · Worth-it</code> to <code>8 · Grow</code>. Two or three high-signal questions — who is the user, what outcome matters, what's the riskiest assumption — then it commits.</p>
+      </div>
+      <div class="step reveal">
+        <span class="step-num" aria-hidden="true">03</span>
+        <h3>It loads only the mode you need</h3>
+        <p>Ten expert modes route to a nine-file reference library — strategy, research, design craft, validation math, shipping, growth, narrative, AI ethics. No 50-page dumps; just the depth the moment demands.</p>
+      </div>
+      <div class="step reveal">
+        <span class="step-num" aria-hidden="true">04</span>
+        <h3>You leave with an artifact</h3>
+        <p>A ranked assumption map. An interview guide that passes Mom Test rules. A usability test plan with real sample-size math. A positioning statement. Every framework named produces something concrete.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 03 LIFECYCLE ============ -->
+<section id="lifecycle" aria-labelledby="lifecycle-title">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <span class="sec-num">03 / The lifecycle</span>
+      <div>
+        <h2 id="lifecycle-title">Nine phases. Each with an<br>objective and <em>exit criteria.</em></h2>
+        <p>You don't leave a phase because you're bored of it — you leave because the evidence says you've earned the next one.</p>
+      </div>
+    </div>
+    <div class="phase-list reveal">
+      <div class="phase"><span class="phase-n">00</span><span class="phase-name">Worth-it</span><span class="phase-goal">Decide if the problem deserves work at all — kill or proceed, honestly</span><span class="phase-ref">product-strategy</span></div>
+      <div class="phase"><span class="phase-n">01</span><span class="phase-name">Discovery</span><span class="phase-goal">Understand user, job, context — ≥5 interviews or ≥30 proxy artifacts</span><span class="phase-ref">discovery-and-research</span></div>
+      <div class="phase"><span class="phase-n">02</span><span class="phase-name">Define</span><span class="phase-goal">A problem statement two teammates would pursue identically</span><span class="phase-ref">discovery-and-research</span></div>
+      <div class="phase"><span class="phase-n">03</span><span class="phase-name">Ideate</span><span class="phase-goal">Many solutions, pressure-tested against the riskiest assumption</span><span class="phase-ref">discovery-and-research</span></div>
+      <div class="phase"><span class="phase-n">04</span><span class="phase-name">Design</span><span class="phase-goal">Real enough to test — a11y in, every screen has empty, loading, error states</span><span class="phase-ref">design-craft</span></div>
+      <div class="phase"><span class="phase-n">05</span><span class="phase-name">Validate</span><span class="phase-goal">Prove it before engineering cost — riskiest assumption tested</span><span class="phase-ref">validation-and-math</span></div>
+      <div class="phase"><span class="phase-n">06</span><span class="phase-name">Ship</span><span class="phase-goal">Hand off without drift — analytics live pre-launch, rollback triggers written</span><span class="phase-ref">shipping-and-measurement</span></div>
+      <div class="phase"><span class="phase-n">07</span><span class="phase-name">Measure</span><span class="phase-goal">Close the loop — outcome measured honestly, learning written down</span><span class="phase-ref">shipping-and-measurement</span></div>
+      <div class="phase"><span class="phase-n">08</span><span class="phase-name">Grow</span><span class="phase-goal">Compound what works — a working loop identified, positioning articulated</span><span class="phase-ref">product-strategy</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 04 MODES ============ -->
+<section id="modes" aria-labelledby="modes-title" style="background:var(--surface)">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <span class="sec-num">04 / Modes</span>
+      <div>
+        <h2 id="modes-title">Ten experts.<br><em>One partner.</em></h2>
+        <p>The skill identifies which hat the moment needs and loads only that expertise. Modes stack when the work demands it.</p>
+      </div>
+    </div>
+    <div class="modes-grid reveal">
+      <article class="mode"><span class="mono">Mode 01</span><h3>Worth-it</h3><p>"Should I build this?" — DVF assumption ranking, segment scoring, pre-committed kill criteria.</p></article>
+      <article class="mode"><span class="mono">Mode 02</span><h3>Discovery partner</h3><p>Interviews under Mom Test rules, contextual inquiry, synthesis, evidence-backed personas and journeys.</p></article>
+      <article class="mode"><span class="mono">Mode 03</span><h3>Design partner</h3><p>Flows, information architecture, interaction, WCAG 2.2 accessibility, internationalization.</p></article>
+      <article class="mode"><span class="mono">Mode 04</span><h3>Validator</h3><p>Usability tests, smoke tests, fake doors, A/B with honest sample-size math, PMF measurement.</p></article>
+      <article class="mode"><span class="mono">Mode 05</span><h3>Critic</h3><p>Design and strategy review against named heuristics — Nielsen's 10, Fitts, Hick, Jakob — with severity scores.</p></article>
+      <article class="mode"><span class="mono">Mode 06</span><h3>Shipper &amp; measurer</h3><p>Design QA, rollout plans, analytics before launch, rollback triggers, post-launch retention reads.</p></article>
+      <article class="mode"><span class="mono">Mode 07</span><h3>Growth &amp; positioning</h3><p>Dunford positioning, growth loops over funnels, north star metrics, pricing direction.</p></article>
+      <article class="mode"><span class="mono">Mode 08</span><h3>Storyteller</h3><p>Value props, launch copy, naming, decks — selling the transformation, not the feature list.</p></article>
+      <article class="mode"><span class="mono">Mode 09</span><h3>AI product</h3><p>UX for anything that generates, predicts, or decides — confidence, failure states, trust, ethics.</p></article>
+      <article class="mode"><span class="mono">Mode 10</span><h3>Portfolio</h3><p>Case studies and design storytelling that show judgment, not just deliverables.</p></article>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 05 NUMBERS ============ -->
+<section id="numbers" aria-labelledby="numbers-title">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <span class="sec-num">05 / The math</span>
+      <div>
+        <h2 id="numbers-title">Opinions are cheap.<br>These are <em>sourced.</em></h2>
+        <p>The skill carries real research at memorize-level — and refuses to fabricate the rest. Numbers are cited, or explicitly labeled illustrative.</p>
+      </div>
+    </div>
+    <div class="num-grid reveal">
+      <div class="num"><strong>5<sup>users</sup></strong><p class="num-label">find ~85% of usability problems per round</p><span class="mono">Nielsen &amp; Landauer, 1993</span></div>
+      <div class="num"><strong>40<sup>%</sup></strong><p class="num-label">"very disappointed" among activated users = product-market fit signal</p><span class="mono">Sean Ellis PMF survey</span></div>
+      <div class="num"><strong>4.5<sup>:1</sup></strong><p class="num-label">minimum contrast for body text; 3:1 for large text &amp; UI</p><span class="mono">WCAG 2.2 AA</span></div>
+      <div class="num"><strong>~575<sup>per arm</sup></strong><p class="num-label">sample needed to detect an 8-point lift from a 34% baseline</p><span class="mono">α=.05 · power=.80</span></div>
+      <div class="num"><strong>4<sup>±1</sup></strong><p class="num-label">working-memory chunks — the real limit, not 7±2</p><span class="mono">Cowan, 2001</span></div>
+      <div class="num"><strong>15–20<sup>people</sup></strong><p class="num-label">participants per segment for reliable card sorting</p><span class="mono">Tullis &amp; Wood, 2004</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 06 PRINCIPLES ============ -->
+<section id="principles" aria-labelledby="principles-title" style="background:var(--surface)">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <span class="sec-num">06 / Principles</span>
+      <div>
+        <h2 id="principles-title">How it <em>operates.</em></h2>
+      </div>
+    </div>
+    <div class="principles reveal">
+      <div class="principle"><span class="mono">01</span><div><strong>Diagnose phase first.</strong><span>Match guidance to where you actually are. Never dump the whole process.</span></div></div>
+      <div class="principle"><span class="mono">02</span><div><strong>Apply frameworks, don't name-drop them.</strong><span>Every framework mentioned must produce a concrete artifact in the reply.</span></div></div>
+      <div class="principle"><span class="mono">03</span><div><strong>Tie user outcomes to business outcomes.</strong><span>And call it out when one is being optimized at the other's expense.</span></div></div>
+      <div class="principle"><span class="mono">04</span><div><strong>Challenge weak thinking, kindly but directly.</strong><span>No flattering bad ideas. No validating assumptions presented as facts.</span></div></div>
+      <div class="principle"><span class="mono">05</span><div><strong>Evidence over opinion.</strong><span>Interviews and observed behavior beat proxies; proxies beat nothing. Research theater is not research.</span></div></div>
+      <div class="principle"><span class="mono">06</span><div><strong>Real sources only.</strong><span>Never fabricate citations, stats, or quotes. Numbers are sourced, or labeled illustrative.</span></div></div>
+      <div class="principle"><span class="mono">07</span><div><strong>Scale to your constraints.</strong><span>A solo founder with one evening gets different methods than a team with research ops.</span></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 07 INSTALL ============ -->
+<section id="install" aria-labelledby="install-title">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <span class="sec-num">07 / Install</span>
+      <div>
+        <h2 id="install-title">Two minutes<br>to a <em>better partner.</em></h2>
+      </div>
+    </div>
+    <div class="install-grid reveal">
+      <div class="install-copy">
+        <p>The skill is a folder of Markdown — no build step, no dependencies. Clone the repository and copy the <span style="font-family:var(--mono);font-size:14px;color:var(--text)">skill/</span> folder into your Claude skills directory.</p>
+        <p>Then just talk to Claude about your product. The skill triggers on phrases like "validate my idea", "is this worth building", "usability test", "review this flow" — or invoke it directly.</p>
+        <p style="margin-bottom:0">Works in Claude Code, the Claude desktop app, and anywhere Agent Skills are supported.</p>
+      </div>
+      <div>
+        <div class="codeblock">
+          <div class="codeblock-head"><span class="mono">terminal</span><button class="copy-btn" data-copy="git clone https://github.com/rahim1845/product-design-partner.git&#10;cp -r product-design-partner/skill ~/.claude/skills/product-design-partner">Copy</button></div>
+          <pre><span class="c"># 1 — get the skill</span>
+git clone https://github.com/rahim1845/product-design-partner.git
+
+<span class="c"># 2 — install it for Claude</span>
+cp -r product-design-partner/skill \
+      ~/.claude/skills/product-design-partner</pre>
+        </div>
+        <div class="codeblock">
+          <div class="codeblock-head"><span class="mono">claude</span><button class="copy-btn" data-copy="/product-design-partner I have an app idea — help me figure out if it's worth building">Copy</button></div>
+          <pre><span class="a">/product-design-partner</span> I have an app idea —
+help me figure out if it's worth building</pre>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ FOOTER ============ -->
+<footer>
+  <div class="wrap">
+    <div class="foot-cta reveal">
+      <h2>Free. Open source.<br><a href="https://github.com/rahim1845/product-design-partner" rel="noopener">Star it on <em>GitHub.</em></a></h2>
+    </div>
+    <div class="foot-bottom">
+      <p>© 2026 · MIT License · Built with Claude Code</p>
+      <div class="foot-links">
+        <a href="https://github.com/rahim1845/product-design-partner" rel="noopener">GitHub</a>
+        <a href="https://github.com/rahim1845/product-design-partner/blob/main/skill/SKILL.md" rel="noopener">Read the skill</a>
+        <a href="https://github.com/rahim1845/product-design-partner/blob/main/LICENSE" rel="noopener">License</a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script>
+// nav scroll state
+const nav = document.getElementById('nav');
+const onScroll = () => nav.classList.toggle('scrolled', scrollY > 24);
+addEventListener('scroll', onScroll, {passive:true}); onScroll();
+
+// scroll reveal
+const io = new IntersectionObserver(entries => {
+  for (const e of entries) if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); }
+}, {threshold: .12});
+document.querySelectorAll('.reveal').forEach(el => io.observe(el));
+
+// copy buttons
+document.querySelectorAll('.copy-btn').forEach(btn => {
+  btn.addEventListener('click', async () => {
+    try {
+      await navigator.clipboard.writeText(btn.dataset.copy.replace(/\n/g,'\n'));
+      const t = btn.textContent; btn.textContent = 'Copied';
+      setTimeout(() => btn.textContent = t, 1600);
+    } catch {}
+  });
+});
+</script>
+</body>
+</html>
