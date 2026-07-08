@@ -298,6 +298,61 @@ section{padding:clamp(80px,12vh,150px) 0;position:relative}
 .principle div strong{font-weight:500;font-size:17px}
 .principle div span{color:var(--muted);display:block;margin-top:4px;font-size:15.5px}
 
+/* ===== DEMO ===== */
+.demo-grid{display:grid;grid-template-columns:minmax(280px,1fr) 1.4fr;gap:clamp(28px,4vw,56px);align-items:start}
+.demo-picker p{color:var(--muted);font-size:15.5px;margin-bottom:24px}
+.demo-chips{display:flex;flex-direction:column;gap:10px}
+.demo-chip{
+  text-align:left;cursor:pointer;
+  background:var(--surface-2);border:1px solid var(--line-strong);border-radius:12px;
+  color:var(--text);font-family:var(--sans);font-size:14.5px;line-height:1.5;
+  padding:16px 18px;min-height:44px;transition:border-color .2s,background .2s;
+}
+.demo-chip:hover{border-color:var(--accent)}
+.demo-chip[aria-pressed="true"]{border-color:var(--accent);background:rgba(212,255,63,.06)}
+.demo-chip .mono{display:block;color:var(--accent);margin-bottom:6px;font-size:10px}
+.demo-note{margin-top:20px;color:var(--faint);font-family:var(--mono);font-size:10.5px;letter-spacing:.06em;line-height:1.7}
+.demo-term{
+  background:#0d0d0f;border:1px solid var(--line-strong);border-radius:16px;overflow:hidden;
+  box-shadow:0 24px 80px rgba(0,0,0,.5);
+}
+.demo-term-head{display:flex;align-items:center;gap:8px;padding:14px 18px;border-bottom:1px solid var(--line)}
+.demo-dot{width:10px;height:10px;border-radius:50%;background:var(--line-strong)}
+.demo-dot:first-child{background:#ff5f57}.demo-dot:nth-child(2){background:#febc2e}.demo-dot:nth-child(3){background:#28c840}
+.demo-term-title{margin-left:10px;color:var(--faint);font-family:var(--mono);font-size:11px;letter-spacing:.1em}
+.demo-body{padding:22px 24px 26px;min-height:380px;font-size:14.5px}
+.demo-you{display:flex;gap:12px;align-items:baseline;color:var(--text)}
+.demo-you .mono{color:var(--faint);flex:none}
+.demo-caret{display:inline-block;width:8px;height:16px;background:var(--accent);vertical-align:-2px;animation:blink 1s steps(1) infinite}
+html.no-motion .demo-caret{animation:none}
+@keyframes blink{50%{opacity:0}}
+.demo-badge{
+  display:inline-flex;align-items:center;gap:8px;margin:18px 0 14px;
+  font-family:var(--mono);font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;
+  color:var(--accent);border:1px solid rgba(212,255,63,.35);border-radius:100px;padding:6px 14px;
+}
+.demo-badge::before{content:"";width:6px;height:6px;border-radius:50%;background:var(--accent)}
+.demo-response{color:var(--muted);line-height:1.7}
+.demo-response > *{margin-bottom:14px}
+.demo-response strong{color:var(--text);font-weight:500}
+.demo-response em{color:var(--accent);font-style:normal}
+.demo-response ul,.demo-response ol{padding-left:20px}
+.demo-response li{margin-bottom:6px}
+.demo-response .tbl{overflow-x:auto;border:1px solid var(--line);border-radius:10px}
+.demo-response table{border-collapse:collapse;width:100%;font-size:13px}
+.demo-response th{font-family:var(--mono);font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--faint);text-align:left;padding:10px 12px;border-bottom:1px solid var(--line)}
+.demo-response td{padding:10px 12px;border-bottom:1px solid var(--line);vertical-align:top}
+.demo-response tr:last-child td{border-bottom:none}
+.sev{font-family:var(--mono);font-size:10px;letter-spacing:.08em;padding:3px 8px;border-radius:5px;white-space:nowrap}
+.sev-4{background:rgba(255,95,87,.14);color:#ff8a84}
+.sev-3{background:rgba(254,188,46,.12);color:#fed36e}
+.demo-empty{color:var(--faint);padding:40px 0;text-align:center;font-family:var(--mono);font-size:12px;letter-spacing:.1em}
+.demo-block{opacity:1}
+.demo-block.pending{opacity:0;transform:translateY(10px)}
+.demo-block.shown{opacity:1;transform:none;transition:opacity .45s ease,transform .45s ease}
+html.no-motion .demo-block.pending{opacity:1;transform:none}
+@media(max-width:900px){.demo-grid{grid-template-columns:1fr}.demo-body{min-height:280px}}
+
 /* ===== INSTALL ===== */
 .install-grid{display:grid;grid-template-columns:1fr 1fr;gap:clamp(32px,5vw,72px);align-items:start}
 .install-copy p{color:var(--muted);margin-bottom:24px}
@@ -388,6 +443,7 @@ footer{border-top:1px solid var(--line);padding:clamp(56px,9vh,110px) 0 40px}
       <a href="#how">How it works</a>
       <a href="#modes">Modes</a>
       <a href="#numbers">The math</a>
+      <a href="#demo">Demo</a>
       <a href="#install">Install</a>
       <button class="icon-btn" id="motionToggle" aria-pressed="false" aria-label="Toggle animations on or off">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M13 2 3 14h7l-1 8 10-12h-7l1-8z"/></svg>
@@ -596,11 +652,48 @@ footer{border-top:1px solid var(--line);padding:clamp(56px,9vh,110px) 0 40px}
   </div>
 </section>
 
-<!-- ============ 07 INSTALL ============ -->
+<!-- ============ 07 DEMO ============ -->
+<section id="demo" aria-labelledby="demo-title">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <span class="sec-num">07 / Try it</span>
+      <div>
+        <h2 id="demo-title">See it <em>think.</em></h2>
+        <p>Pick a real situation and watch how the skill responds — diagnosing the phase, loading the right mode, and leaving you with an artifact.</p>
+      </div>
+    </div>
+    <div class="demo-grid reveal">
+      <div class="demo-picker">
+        <p>Four situations, straight from real product work. Click one:</p>
+        <div class="demo-chips" role="group" aria-label="Example prompts">
+          <button class="demo-chip" data-demo="0" aria-pressed="false"><span class="mono">Worth-it · Phase 0</span>"I have an idea for a meal-planning app for busy parents. Should I build it?"</button>
+          <button class="demo-chip" data-demo="1" aria-pressed="false"><span class="mono">Measure · Phase 7</span>"People sign up for my habit tracker but stop opening it after a few days."</button>
+          <button class="demo-chip" data-demo="2" aria-pressed="false"><span class="mono">Critic · Review</span>"Review my checkout: account required before payment, shipping cost shown at the end."</button>
+          <button class="demo-chip" data-demo="3" aria-pressed="false"><span class="mono">Discovery · No users</span>"I'm a student — I can't recruit real users. How do I research my study-app idea?"</button>
+        </div>
+        <p class="demo-note">Pre-recorded demo for illustration. Install the skill and the real thing responds to <em style="color:var(--muted);font-style:normal">your</em> product, with follow-up questions and full artifacts.</p>
+      </div>
+      <div class="demo-term" aria-label="Demo conversation">
+        <div class="demo-term-head" aria-hidden="true">
+          <span class="demo-dot"></span><span class="demo-dot"></span><span class="demo-dot"></span>
+          <span class="demo-term-title">claude · product-design-partner</span>
+        </div>
+        <div class="demo-body">
+          <div class="demo-you" id="demoYou" hidden><span class="mono">You</span><span id="demoInput"></span></div>
+          <div id="demoBadge" hidden class="demo-badge"></div>
+          <div class="demo-response" id="demoResponse" aria-live="polite" aria-busy="false"></div>
+          <p class="demo-empty" id="demoEmpty">← Pick an example to run the demo</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 08 INSTALL ============ -->
 <section id="install" aria-labelledby="install-title">
   <div class="wrap">
     <div class="sec-head reveal">
-      <span class="sec-num">07 / Install</span>
+      <span class="sec-num">08 / Install</span>
       <div>
         <h2 id="install-title">Two minutes<br>to a <em>better partner.</em></h2>
       </div>
@@ -658,7 +751,7 @@ help me figure out if it's worth building</pre>
 
 <div class="tour-panel" id="tourPanel" role="dialog" aria-label="Guided voice tour" tabindex="-1" hidden>
   <div class="tour-top">
-    <span class="tour-step-label" id="tourStepLabel">Step 1 of 7</span>
+    <span class="tour-step-label" id="tourStepLabel">Step 1 of 8</span>
     <button class="tour-btn" id="tourClose" aria-label="Close tour">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"/></svg>
     </button>
@@ -735,6 +828,31 @@ function enableGsap(){
 function disableGsap(){
   if (gsapCtx){ gsapCtx.revert(); gsapCtx = null; }
 }
+
+/* Resilience guard: if a .reveal is in the viewport but its tween is
+   frozen (stalled ticker, blocked rAF, aborted script), force it visible.
+   Two opacity samples 400ms apart distinguish "animating" from "stuck". */
+function guardReveals(){
+  const check = () => {
+    if (!window.gsap) return;
+    document.querySelectorAll('.reveal').forEach(el => {
+      const r = el.getBoundingClientRect();
+      if (r.top > innerHeight || r.bottom < 0) return;
+      const o1 = +getComputedStyle(el).opacity;
+      if (o1 >= .95) return;
+      setTimeout(() => {
+        const o2 = +getComputedStyle(el).opacity;
+        if (o2 < .95 && Math.abs(o2 - o1) < .01){
+          gsap.set(el, {clearProps:'opacity,visibility,transform'});
+        }
+      }, 400);
+    });
+  };
+  setTimeout(check, 1800);
+  let t;
+  addEventListener('scroll', () => { clearTimeout(t); t = setTimeout(check, 700); }, {passive:true});
+}
+guardReveals();
 
 /* ============================================================
    THREE.JS — particle field + wireframe in the hero
@@ -873,6 +991,8 @@ const STEPS = [
     text:'Ten expert modes cover the whole journey: strategy, discovery research, design craft, validation, critique, shipping, growth, storytelling, AI products, and portfolio work. The skill picks the right hat for the moment.' },
   { sel:'#numbers', label:'The math',
     text:'The advice is backed by sourced research: five users find about eighty-five percent of usability problems. Forty percent very-disappointed is the product-market-fit bar. Contrast ratios, sample sizes — all cited, never invented.' },
+  { sel:'#demo', label:'Live demo',
+    text:'Here you can try the skill for yourself. Pick one of four real situations — a new idea, a retention problem, a design review, or research without users — and watch how the skill diagnoses the phase and answers with a concrete artifact.' },
   { sel:'#install', label:'Get started',
     text:'Installing takes two minutes: clone the repository from GitHub and copy the skill folder into your Claude skills directory. It is free, MIT licensed, and open source. Thanks for taking the tour!' }
 ];
@@ -994,6 +1114,140 @@ document.addEventListener('keydown', e => {
 
 // some browsers load voices async
 if (synth) synth.onvoiceschanged = () => {};
+
+/* ============================================================
+   DEMO — pre-recorded example runs of the skill.
+   Prompt types in, mode badge appears, response blocks stream.
+   ============================================================ */
+const DEMOS = [
+  {
+    input:'I have an idea for a meal-planning app for busy parents. Should I build it?',
+    badge:'Mode: Worth-it · Phase 0 diagnosed',
+    html:`
+<p>Before anything gets built — quick calibration, one line each:</p>
+<ol>
+<li><strong>Who exactly?</strong> "Busy parents" is a demographic. Whose Tuesday 5pm are we fixing?</li>
+<li><strong>What do they do today</strong> when dinner is undecided — takeout, freezer, panic-scroll recipes?</li>
+<li><strong>What's the riskiest assumption</strong> your idea rides on?</li>
+</ol>
+<p>While you think, here's your <strong>assumption map</strong>, ranked by risk × unknowns:</p>
+<div class="tbl"><table>
+<tr><th>Assumption</th><th>Lens</th><th>Risk</th></tr>
+<tr><td>The problem is <strong>deciding</strong>, not finding recipes</td><td>Desirability</td><td><span class="sev sev-4">TEST FIRST</span></td></tr>
+<tr><td>Parents will plan weekly (vs decide daily)</td><td>Desirability</td><td><span class="sev sev-3">HIGH</span></td></tr>
+<tr><td>They'd pay when free alternatives exist</td><td>Viability</td><td><span class="sev sev-3">HIGH</span></td></tr>
+</table></div>
+<p><strong>Kill criteria — write this down now:</strong> <em>stop</em> if fewer than 4 of 10 parents describe the 5–6pm decision stall unprompted.</p>
+<p>Cheapest next test: 5 Mom-Test interviews this week. Want the interview script?</p>`
+  },
+  {
+    input:'People sign up for my habit tracker but stop opening it after a few days.',
+    badge:'Mode: Measure · Phase 7 → activation',
+    html:`
+<p>Day-1 drop-off is usually an <strong>activation problem wearing a retention costume</strong>. Before adding features, three reads:</p>
+<ol>
+<li><strong>Plot the retention curve.</strong> Flattening above zero = a core who'd miss you — find what they did differently. Falling to zero = the product isn't delivering the job yet; fix that before any growth spend.</li>
+<li><strong>Define activation honestly.</strong> Not "signed up" — the first moment of real value. For a habit tracker, something like <em>first check-in 3 days running</em>.</li>
+<li><strong>Interview the anomalies.</strong> 5 users who left, 3 who stayed. Ask what they were trying to change in their life, not what features they want.</li>
+</ol>
+<p><strong>This week's diagnostic artifact:</strong></p>
+<ul>
+<li>Activation funnel: signup → first habit created → first check-in → 3-day streak. Find the cliff.</li>
+<li>Cohort curve, weekly, activated users only</li>
+<li>8 interviews (script on request — Mom Test rules)</li>
+</ul>
+<p><strong>Anti-pattern to avoid:</strong> pouring acquisition into a leaky bucket. Retention before growth, always.</p>`
+  },
+  {
+    input:'Review my checkout: account required before payment, shipping cost shown at the end.',
+    badge:'Mode: Critic · Heuristic evaluation',
+    html:`
+<p>Two findings, severity-scored on Nielsen's 0–4 scale:</p>
+<div class="tbl"><table>
+<tr><th>Finding</th><th>Severity</th><th>Fix</th></tr>
+<tr><td><strong>Forced account before payment.</strong> A top documented abandonment driver (Baymard's checkout research — directional).</td><td><span class="sev sev-4">SEV 4</span></td><td>Guest checkout; offer the account <em>after</em> the receipt, pre-filled.</td></tr>
+<tr><td><strong>Shipping cost revealed last.</strong> Surprise costs are the #1 stated reason for cart abandonment.</td><td><span class="sev sev-4">SEV 4</span></td><td>Estimate shipping on step 1 from postcode or default region.</td></tr>
+</table></div>
+<p><strong>Jakob's Law applies:</strong> checkout is a settled pattern — users want yours to work like everyone else's. Match convention; spend your creativity on the 5% that's genuinely yours.</p>
+<p><strong>Test only the delta:</strong> one 5-user usability round on the revised flow finds ~85% of what's left (Nielsen &amp; Landauer). Want the test plan?</p>`
+  },
+  {
+    input:"I'm a student — I can't recruit real users. How do I research my study-app idea?",
+    badge:'Mode: Discovery · Proxy evidence',
+    html:`
+<p><strong>No users ≠ no evidence.</strong> The source shifts to proxy — still real, just labeled honestly. This weekend:</p>
+<ul>
+<li><strong>30 app-store reviews</strong> of Anki, Quizlet, Forest — 1★ and 5★ reveal the most. Copy verbatims with links.</li>
+<li><strong>10 threads</strong> from r/GetStudying and r/college — what do people <em>actually complain about</em> unprompted?</li>
+<li><strong>Published research</strong> — NN/g on note-taking UX, competitors' case studies.</li>
+</ul>
+<p><strong>Synthesis artifact</strong> — a grid, one row per signal:</p>
+<div class="tbl"><table>
+<tr><th>Verbatim</th><th>Pain</th><th>Source</th></tr>
+<tr><td>"I spend more time making flashcards than studying"</td><td>Setup cost</td><td>App Store, 1★</td></tr>
+<tr><td>"Streak broke once and I never came back"</td><td>Fragile motivation</td><td>Reddit</td></tr>
+</table></div>
+<p>Label the output <strong>"Proxy persona"</strong> and state the limit: <em>"synthesized from 40 reviews + 12 threads; next step: 5 interviews."</em> A real grumpy review beats a polished fake quote — never invent a verbatim.</p>`
+  }
+];
+
+const demoYou = document.getElementById('demoYou');
+const demoInput = document.getElementById('demoInput');
+const demoBadge = document.getElementById('demoBadge');
+const demoResponse = document.getElementById('demoResponse');
+const demoEmpty = document.getElementById('demoEmpty');
+const chips = [...document.querySelectorAll('.demo-chip')];
+let demoRun = 0; // token to cancel a running animation
+
+async function runDemo(i){
+  const token = ++demoRun;
+  const demo = DEMOS[i];
+  chips.forEach((c, ci) => c.setAttribute('aria-pressed', String(ci === i)));
+  demoEmpty.hidden = true;
+  demoBadge.hidden = true;
+  demoResponse.innerHTML = '';
+  demoResponse.setAttribute('aria-busy', 'true');
+  demoYou.hidden = false;
+
+  const instant = !motionOn;
+  const wait = ms => new Promise(r => setTimeout(r, ms));
+
+  // 1 — type the prompt
+  if (instant){
+    demoInput.textContent = demo.input;
+  } else {
+    demoInput.innerHTML = '<span class="demo-caret"></span>';
+    for (let c = 0; c <= demo.input.length; c++){
+      if (token !== demoRun) return;
+      demoInput.innerHTML = demo.input.slice(0, c).replace(/&/g,'&amp;').replace(/</g,'&lt;') + '<span class="demo-caret"></span>';
+      await wait(14);
+    }
+    demoInput.textContent = demo.input;
+    await wait(350);
+  }
+  if (token !== demoRun) return;
+
+  // 2 — mode badge
+  demoBadge.textContent = demo.badge;
+  demoBadge.hidden = false;
+  if (!instant) await wait(500);
+  if (token !== demoRun) return;
+
+  // 3 — stream response blocks
+  demoResponse.innerHTML = demo.html;
+  const blocks = [...demoResponse.children];
+  if (!instant){
+    blocks.forEach(b => b.classList.add('demo-block','pending'));
+    for (const b of blocks){
+      if (token !== demoRun) return;
+      b.classList.add('shown');
+      await wait(260);
+    }
+  }
+  demoResponse.setAttribute('aria-busy', 'false');
+}
+
+chips.forEach((chip, i) => chip.addEventListener('click', () => runDemo(i)));
 
 });
 </script>
